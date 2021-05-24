@@ -12,7 +12,8 @@ target_sources(danmaku-editor
     systems/RenderSystem.cpp
     graphic/Program.cpp
     graphic/Texture.cpp
-    graphic/ResourceManager.cpp
+    resources/ProgramLoader.cpp
+    resources/TextureLoader.cpp
     ui/Ui.cpp
     Game.cpp
     main.cpp

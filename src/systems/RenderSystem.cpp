@@ -1,9 +1,14 @@
 #include "RenderSystem.hpp"
 
-#include "../graphic/Program.hpp"
-#include "../graphic/ResourceManager.hpp"
+using namespace entt::literals;
 
-RenderSystem::RenderSystem(entt::registry &registry) : BaseSystem(registry) {
+RenderSystem::RenderSystem(
+    entt::registry &registry,
+    const entt::resource_cache<Program> &program_cache,
+    const entt::resource_cache<Texture> &texture_cache)
+    : BaseSystem(registry), _program_cache(program_cache),
+      _texture_cache(texture_cache) {
+
   float vertices[] = {
       // pos      // tex
       0.0f, 1.0f, 0.0f, 1.0f, //
@@ -34,14 +39,11 @@ RenderSystem::~RenderSystem() {
 }
 
 void RenderSystem::draw_sprite(
-    Texture &texture,
+    entt::resource_handle<Texture> texture,
     glm::vec2 position,
     glm::vec2 size,
     float rotate,
     glm::vec3 color) {
-  auto program = ResourceManager::get_program("base");
-  program.use();
-
   glm::mat4 model = glm::mat4(1.0f);
 
   // first translate (transformations are: scale happens first, then rotation,
@@ -54,11 +56,13 @@ void RenderSystem::draw_sprite(
       glm::translate(model, glm::vec3(-0.5f * size.x, -0.5f * size.y, 0.0f));
   model = glm::scale(model, glm::vec3(size, 1.0f));
 
-  program.set_mat4("model", model);
-  program.set_vec3("spriteColor", color);
+  auto program = _program_cache.handle("base"_hs);
+  program->use();
+  program->set_mat4("model", model);
+  program->set_vec3("spriteColor", color);
 
   glActiveTexture(GL_TEXTURE0);
-  texture.bind();
+  texture->bind();
 
   glBindVertexArray(_quadVAO);
   glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -72,11 +76,11 @@ void RenderSystem::update() {
   auto view = _registry.view<const Sprite>();
   for (auto [entity, sprite] : view.each()) {
     if (sprite.type == 0) {
-      auto texture = ResourceManager::get_texture("circle");
+      auto texture = _texture_cache.handle("circle"_hs);
       draw_sprite(
           texture, sprite.position, sprite.size, sprite.rotate, sprite.color);
     } else if (sprite.type == 1) {
-      auto texture = ResourceManager::get_texture("bullet");
+      auto texture = _texture_cache.handle("bullet"_hs);
       draw_sprite(
           texture, sprite.position, sprite.size, sprite.rotate, sprite.color);
     }
