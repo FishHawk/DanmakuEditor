@@ -8,9 +8,9 @@
 #include "../components/Sprite.hpp"
 #include "../util/debug.hpp"
 
-void MoveSystem::update(entt::registry &registry) {
+void MoveSystem::update() {
   {
-    auto view = registry.view<const Livetime, Moveable>();
+    auto view = _registry.view<const Livetime, Moveable>();
     for (auto [entity, cycle, moveable] : view.each()) {
       const auto origin = std::visit(
           [&](Moveable::Origin &&arg) -> Position {
@@ -18,7 +18,7 @@ void MoveSystem::update(entt::registry &registry) {
               return std::get<Position>(arg);
             } else if (std::holds_alternative<Entity>(arg)) {
               const auto parent = std::get<Entity>(arg);
-              return registry.get<Moveable>(parent).position;
+              return _registry.get<Moveable>(parent).position;
             } else {
               return Position{0.f, 0.f};
             }
@@ -32,7 +32,7 @@ void MoveSystem::update(entt::registry &registry) {
   }
 
   {
-    auto view = registry.view<Sprite, const Moveable>();
+    auto view = _registry.view<Sprite, const Moveable>();
     for (auto [entity, sprite, moveable] : view.each()) {
       sprite.position = moveable.position;
     }

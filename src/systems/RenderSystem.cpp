@@ -1,8 +1,9 @@
 #include "RenderSystem.hpp"
 
-#include "ResourceManager.hpp"
+#include "../graphic/Program.hpp"
+#include "../graphic/ResourceManager.hpp"
 
-RenderSystem::RenderSystem() {
+RenderSystem::RenderSystem(entt::registry &registry) : BaseSystem(registry) {
   float vertices[] = {
       // pos      // tex
       0.0f, 1.0f, 0.0f, 1.0f, //
@@ -64,11 +65,11 @@ void RenderSystem::draw_sprite(
   glBindVertexArray(0);
 }
 
-void RenderSystem::update(entt::registry &registry) {
+void RenderSystem::update() {
   glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  auto view = registry.view<const Sprite>();
+  auto view = _registry.view<const Sprite>();
   for (auto [entity, sprite] : view.each()) {
     if (sprite.type == 0) {
       auto texture = ResourceManager::get_texture("circle");

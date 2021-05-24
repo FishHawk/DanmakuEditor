@@ -9,10 +9,10 @@ target_sources(danmaku-editor
     systems/LaunchSystem.cpp
     systems/LivetimeSystem.cpp
     systems/MoveSystem.cpp
+    systems/RenderSystem.cpp
     graphic/Program.cpp
     graphic/Texture.cpp
     graphic/ResourceManager.cpp
-    graphic/RenderSystem.cpp
     ui/Ui.cpp
     Game.cpp
     main.cpp

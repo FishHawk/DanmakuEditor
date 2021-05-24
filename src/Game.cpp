@@ -10,11 +10,11 @@
 #include "generators/DirectionGenerator.hpp"
 #include "generators/ModifierGenerator.hpp"
 #include "generators/OriginGenerator.hpp"
-#include "graphic/RenderSystem.hpp"
 #include "graphic/ResourceManager.hpp"
 #include "systems/LaunchSystem.hpp"
 #include "systems/LivetimeSystem.hpp"
 #include "systems/MoveSystem.hpp"
+#include "systems/RenderSystem.hpp"
 #include "ui/Ui.hpp"
 #include "util/Timer.hpp"
 #include "util/debug.hpp"
@@ -90,6 +90,11 @@ Game::Game() : _state(State::ACTIVE), _keys() {
 }
 
 void Game::loop() {
+  static LivetimeSystem livetime_system{_registry};
+  static MoveSystem move_system{_registry};
+  static LaunchSystem launch_system{_registry};
+  static RenderSystem render_system{_registry};
+
   util::Timer frame_timer, system_timer;
 
   while (!_window.should_close()) {
@@ -99,15 +104,11 @@ void Game::loop() {
     _window.poll_events();
     process_input();
 
-    LivetimeSystem::get_instance().update(_registry);
+    livetime_system.update();
 
-    update_with_timer(
-        "Launch", [this]() { LaunchSystem::get_instance().update(_registry); });
-    update_with_timer(
-        "Move", [this]() { MoveSystem::get_instance().update(_registry); });
-    update_with_timer(
-        "Render", [this]() { RenderSystem::get_instance().update(_registry); });
-
+    update_with_timer("Launch", [this]() { launch_system.update(); });
+    update_with_timer("Move", [this]() { move_system.update(); });
+    update_with_timer("Render", [this]() { render_system.update(); });
     update_with_timer("Ui", [this]() { Ui::get_instance().update(_registry); });
 
     _window.swap_buffers();
