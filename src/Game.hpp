@@ -6,9 +6,10 @@
 #include <entt/entt.hpp>
 #include <glad/glad.h>
 
+#include "Window.hpp"
 #include "graphic/Program.hpp"
 #include "graphic/Texture.hpp"
-#include "Window.hpp"
+#include "resources/ResourceManager.hpp"
 
 class Game {
 public:
@@ -49,6 +50,7 @@ private:
   GLboolean _keys[1024];
   entt::registry _registry;
 
+  ResourceManager _resource_manager;
   entt::resource_cache<Program> _program_cache;
   entt::resource_cache<Texture> _texture_cache;
 };

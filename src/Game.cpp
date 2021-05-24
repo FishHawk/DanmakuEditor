@@ -67,11 +67,10 @@ void Game::key_callback(
   }
 }
 
-Game::Game() : _state(State::ACTIVE), _keys() {
-  auto program = _program_cache.load<ProgramLoader>(
-      "base"_hs,
-      "/home/wh/Projects/DanmakuEditor/res/shader/base.vs",
-      "/home/wh/Projects/DanmakuEditor/res/shader/base.fs");
+Game::Game()
+    : _state(State::ACTIVE), _keys(),
+      _resource_manager("/home/wh/Projects/DanmakuEditor/assets/") {
+  auto program = _resource_manager.program_cache().handle("base"_hs);
   glm::mat4 projection = glm::ortho(
       0.0f,
       static_cast<float>(_width),
@@ -83,15 +82,6 @@ Game::Game() : _state(State::ACTIVE), _keys() {
   program->set_int("image", 0);
   program->set_mat4("projection", projection);
 
-  _texture_cache.load<TextureLoader>(
-      "circle"_hs,
-      "/home/wh/Projects/DanmakuEditor/res/texture/circle.png",
-      true);
-  _texture_cache.load<TextureLoader>(
-      "bullet"_hs,
-      "/home/wh/Projects/DanmakuEditor/res/texture/bullet.png",
-      true);
-
   run_test_case(0);
 }
 
@@ -99,7 +89,10 @@ void Game::loop() {
   static LivetimeSystem livetime_system{_registry};
   static MoveSystem move_system{_registry};
   static LaunchSystem launch_system{_registry};
-  static RenderSystem render_system{_registry, _program_cache, _texture_cache};
+  static RenderSystem render_system{
+      _registry,
+      _resource_manager.program_cache(),
+      _resource_manager.texture_cache()};
 
   util::Timer frame_timer, system_timer;
 
