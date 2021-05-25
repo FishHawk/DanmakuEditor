@@ -71,8 +71,8 @@ void Ui::update(entt::registry &registry) {
   ImGui::Combo(
       "Test case",
       &current_case,
-      TestCase::case_name.data(),
-      TestCase::case_name.size());
+      game.test_case.case_name.data(),
+      game.test_case.case_name.size());
 
   ImPlot::SetNextPlotLimits(0, record_time, -0.001, 0.03);
   if (ImPlot::BeginPlot("System time", "", "", ImVec2(500, 200))) {

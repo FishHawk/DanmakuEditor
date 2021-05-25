@@ -8,11 +8,11 @@
 #include "../components/Sprite.hpp"
 #include "../util/debug.hpp"
 
-static const std::vector<Sprite> sprites{
-    Sprite{0, Position{0.f, 0.f}, Size{64.f, 64.f}, 0},
-    Sprite{0, Position{0.f, 0.f}, Size{16.f, 16.f}, 0},
-    Sprite{1, Position{0.f, 0.f}, Size{10.f, 10.f}, 0},
-};
+// static const std::vector<Sprite> sprites{
+//     Sprite{0, Position{0.f, 0.f}, Size{64.f, 64.f}, 0},
+//     Sprite{0, Position{0.f, 0.f}, Size{16.f, 16.f}, 0},
+//     Sprite{1, Position{0.f, 0.f}, Size{10.f, 10.f}, 0},
+// };
 
 void LaunchSystem::update() {
   auto view =
@@ -28,8 +28,14 @@ void LaunchSystem::update() {
 
       _registry.emplace<Livetime>(child, Livetime{launchable_copy.duration});
 
-      if (launchable_copy.sprite_type >= 0) {
-        _registry.emplace<Sprite>(child, sprites[launchable_copy.sprite_type]);
+      if (launchable_copy.sprite_type) {
+        auto sprite_frame = launchable_copy.sprite_type;
+        _registry.emplace<Sprite>(
+            child,
+            Sprite{
+                &(sprite_frame->texture),
+                Position{0, 0},
+                sprite_frame->source_size});
       }
 
       auto origin = launchable_copy.origin_generator(

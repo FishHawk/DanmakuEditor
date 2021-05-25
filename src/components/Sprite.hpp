@@ -4,8 +4,7 @@
 #include "Moveable.hpp"
 
 struct Sprite {
-  // Texture texture;
-  int type;
+  Texture const *texture;
   Position position;
   Size size;
   float rotate;

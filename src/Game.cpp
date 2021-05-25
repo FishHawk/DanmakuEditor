@@ -3,7 +3,6 @@
 #include <entt/entt.hpp>
 #include <glm/glm.hpp>
 
-#include "TestCase.hpp"
 #include "components/Launchable.hpp"
 #include "components/Livetime.hpp"
 #include "components/Moveable.hpp"
@@ -69,7 +68,8 @@ void Game::key_callback(
 
 Game::Game()
     : _state(State::ACTIVE), _keys(),
-      _resource_manager("/home/wh/Projects/DanmakuEditor/assets/") {
+      _resource_manager("/home/wh/Projects/DanmakuEditor/assets/"),
+      test_case(_resource_manager) {
   auto program = _resource_manager.program_cache().handle("base"_hs);
   glm::mat4 projection = glm::ortho(
       0.0f,
@@ -129,6 +129,6 @@ void Game::run_test_case(size_t index) {
 
   const auto spawn = _registry.create();
   _registry.emplace<Livetime>(spawn, 2);
-  _registry.emplace<Launchable>(spawn, TestCase::cases.at(index));
+  _registry.emplace<Launchable>(spawn, test_case.cases.at(index));
   _registry.emplace<Moveable>(spawn, Position(0, 0));
 }

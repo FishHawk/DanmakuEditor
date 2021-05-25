@@ -6,6 +6,7 @@
 #include <entt/entt.hpp>
 #include <glad/glad.h>
 
+#include "TestCase.hpp"
 #include "Window.hpp"
 #include "graphic/Program.hpp"
 #include "graphic/Texture.hpp"
@@ -53,4 +54,7 @@ private:
   ResourceManager _resource_manager;
   entt::resource_cache<Program> _program_cache;
   entt::resource_cache<Texture> _texture_cache;
+
+public:
+  TestCase test_case;
 };

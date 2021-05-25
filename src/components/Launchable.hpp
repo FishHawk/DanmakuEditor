@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../graphic/SpriteFrame.hpp"
 #include "Moveable.hpp"
 
 struct Launchable {
@@ -16,7 +17,7 @@ struct Launchable {
     float direction;
   };
 
-  int sprite_type;
+  entt::resource_handle<SpriteFrame> sprite_type;
   Time duration;
   RepetitionGenerator repetition_generator;
   OriginGenerator origin_generator;

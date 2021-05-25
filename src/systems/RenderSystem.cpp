@@ -39,7 +39,7 @@ RenderSystem::~RenderSystem() {
 }
 
 void RenderSystem::draw_sprite(
-    entt::resource_handle<Texture> texture,
+    const Texture &texture,
     glm::vec2 position,
     glm::vec2 size,
     float rotate,
@@ -62,7 +62,7 @@ void RenderSystem::draw_sprite(
   program->set_vec3("spriteColor", color);
 
   glActiveTexture(GL_TEXTURE0);
-  texture->bind();
+  texture.bind();
 
   glBindVertexArray(_quadVAO);
   glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -75,14 +75,11 @@ void RenderSystem::update() {
 
   auto view = _registry.view<const Sprite>();
   for (auto [entity, sprite] : view.each()) {
-    if (sprite.type == 0) {
-      auto texture = _texture_cache.handle("circle"_hs);
-      draw_sprite(
-          texture, sprite.position, sprite.size, sprite.rotate, sprite.color);
-    } else if (sprite.type == 1) {
-      auto texture = _texture_cache.handle("bullet"_hs);
-      draw_sprite(
-          texture, sprite.position, sprite.size, sprite.rotate, sprite.color);
-    }
+    draw_sprite(
+        *(sprite.texture),
+        sprite.position,
+        sprite.size,
+        sprite.rotate,
+        sprite.color);
   }
 }

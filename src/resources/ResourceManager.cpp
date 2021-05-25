@@ -10,8 +10,17 @@ ResourceManager::ResourceManager(const std::filesystem::path &resource_dir)
   _program_cache.load<ProgramLoader>(
       "base"_hs, program_dir / "base.vs", program_dir / "base.fs");
 
-  _texture_cache.load<TextureLoader>(
-      "circle"_hs, texture_dir / "circle.png", true);
-  _texture_cache.load<TextureLoader>(
-      "bullet"_hs, texture_dir / "bullet.png", true);
+  {
+    auto texture = _texture_cache.load<TextureLoader>(
+        "circle"_hs, texture_dir / "circle.png", true);
+    _sprite_frame_cache.load<SpriteFrameLoader>("aircraft"_hs, texture);
+    _sprite_frame_cache.load<SpriteFrameLoader>(
+        "cannon"_hs, texture, Size{16, 16});
+  }
+
+  {
+    auto texture = _texture_cache.load<TextureLoader>(
+        "bullet"_hs, texture_dir / "bullet.png", true);
+    _sprite_frame_cache.load<SpriteFrameLoader>("bullet"_hs, texture);
+  }
 }
