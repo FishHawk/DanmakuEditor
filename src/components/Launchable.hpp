@@ -11,12 +11,6 @@ struct Launchable {
   using ModifierGenerator = std::function<Moveable::Modifier(Direction)>;
   using LaunchableGenerator = std::function<Launchable()>;
 
-  struct Indicator {
-    using Generator = std::function<Indicator(Time, size_t)>;
-    Position position;
-    float direction;
-  };
-
   entt::resource_handle<SpriteFrame> sprite_type;
   Time duration;
   RepetitionGenerator repetition_generator;

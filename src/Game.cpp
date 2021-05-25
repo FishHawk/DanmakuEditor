@@ -69,7 +69,7 @@ void Game::key_callback(
 Game::Game()
     : _state(State::ACTIVE), _keys(),
       _resource_manager("/home/wh/Projects/DanmakuEditor/assets/"),
-      test_case(_resource_manager) {
+      _spell_manager(_resource_manager) {
   auto program = _resource_manager.program_cache().handle("base"_hs);
   glm::mat4 projection = glm::ortho(
       0.0f,
@@ -82,7 +82,7 @@ Game::Game()
   program->set_int("image", 0);
   program->set_mat4("projection", projection);
 
-  run_test_case(0);
+  run_spell(0);
 }
 
 void Game::loop() {
@@ -124,11 +124,11 @@ void Game::update_with_timer(
   Ui::get_instance().append_system_time(name, timer.elapsed());
 }
 
-void Game::run_test_case(size_t index) {
+void Game::run_spell(size_t index) {
   _registry.clear();
 
   const auto spawn = _registry.create();
   _registry.emplace<Livetime>(spawn, 2);
-  _registry.emplace<Launchable>(spawn, test_case.cases.at(index));
+  _registry.emplace<Launchable>(spawn, _spell_manager.spells.at(index));
   _registry.emplace<Moveable>(spawn, Position(0, 0));
 }

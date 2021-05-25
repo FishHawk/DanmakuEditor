@@ -18,7 +18,7 @@ target_sources(danmaku-editor
     ui/Ui.cpp
     Game.cpp
     main.cpp
-    TestCase.cpp
+    SpellManager.cpp
     Window.cpp
 )
 

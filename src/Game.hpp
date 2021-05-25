@@ -6,7 +6,7 @@
 #include <entt/entt.hpp>
 #include <glad/glad.h>
 
-#include "TestCase.hpp"
+#include "SpellManager.hpp"
 #include "Window.hpp"
 #include "graphic/Program.hpp"
 #include "graphic/Texture.hpp"
@@ -31,7 +31,8 @@ public:
   static void
   key_callback(GLFWwindow *window, int key, int scancode, int action, int mods);
 
-  void run_test_case(size_t index);
+  void run_spell(size_t index);
+  const auto &spell_manager() { return _spell_manager; }
 
 private:
   Game();
@@ -52,9 +53,5 @@ private:
   entt::registry _registry;
 
   ResourceManager _resource_manager;
-  entt::resource_cache<Program> _program_cache;
-  entt::resource_cache<Texture> _texture_cache;
-
-public:
-  TestCase test_case;
+  SpellManager _spell_manager;
 };

@@ -6,7 +6,7 @@
 #include <implot.h>
 
 #include "../Game.hpp"
-#include "../TestCase.hpp"
+#include "../SpellManager.hpp"
 #include "../components/Launchable.hpp"
 #include "../components/Livetime.hpp"
 #include "../components/Moveable.hpp"
@@ -43,7 +43,8 @@ Ui::Ui() {
 };
 
 void Ui::update(entt::registry &registry) {
-  auto &game = Game::get_instance();
+  static auto &game = Game::get_instance();
+  static auto &spell_names = game.spell_manager().spell_names;
 
   append_component_number("Entity", registry.size());
   append_component_number("Sprite", registry.view<Sprite>().size());
@@ -56,23 +57,27 @@ void Ui::update(entt::registry &registry) {
   ImGui_ImplGlfw_NewFrame();
   ImGui::NewFrame();
 
-
-
   // Define gui
   ImGui::Begin("Console");
   ImGui::SetWindowPos(ImVec2(600.f, 0.f));
   ImGui::SetWindowSize(ImVec2(510.f, 800.f));
 
-  static int current_case = 0;
+  static int spell_index = 0;
   if (ImGui::Button("Run")) {
-    game.run_test_case(current_case);
+    game.run_spell(spell_index);
   }
   ImGui::SameLine();
-  ImGui::Combo(
-      "Test case",
-      &current_case,
-      game.test_case.case_name.data(),
-      game.test_case.case_name.size());
+
+  if (ImGui::BeginCombo("Spell", spell_names[spell_index])) {
+    for (int i = 0; i < spell_names.size(); ++i) {
+      const bool is_selected = (spell_index == i);
+      if (ImGui::Selectable(spell_names[i], is_selected))
+        spell_index = i;
+      if (is_selected)
+        ImGui::SetItemDefaultFocus();
+    }
+    ImGui::EndCombo();
+  }
 
   ImPlot::SetNextPlotLimits(0, record_time, -0.001, 0.03);
   if (ImPlot::BeginPlot("System time", "", "", ImVec2(500, 200))) {

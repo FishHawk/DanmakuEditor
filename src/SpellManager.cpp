@@ -1,4 +1,4 @@
-#include "TestCase.hpp"
+#include "SpellManager.hpp"
 
 #include <random>
 
@@ -15,13 +15,13 @@ std::default_random_engine generator;
 std::uniform_real_distribution<Distance> distribution(-1, 1);
 auto unifom = std::bind(distribution, generator);
 
-TestCase::TestCase(const ResourceManager &resource_manager)
+SpellManager::SpellManager(const ResourceManager &resource_manager)
     : _resource_manager(resource_manager) {
   auto aircraft = _resource_manager.sprite_frame_cache().handle("aircraft"_hs);
   auto cannon = _resource_manager.sprite_frame_cache().handle("cannon"_hs);
   auto bullet = _resource_manager.sprite_frame_cache().handle("bullet"_hs);
 
-  const auto case1 = Launchable{
+  const auto spell1 = Launchable{
       aircraft,
       -1,
       repetition::at_start(),
@@ -51,7 +51,7 @@ TestCase::TestCase(const ResourceManager &resource_manager)
             }};
       }};
 
-  const auto case2 = Launchable{
+  const auto spell2 = Launchable{
       aircraft,
       -1,
       repetition::at_start(),
@@ -84,13 +84,13 @@ TestCase::TestCase(const ResourceManager &resource_manager)
             }};
       }};
 
-  auto default_case = case1;
-  add_test_case("default", default_case);
-  add_test_case("case1", case1);
-  add_test_case("case2", case2);
+  auto default_spell = spell1;
+  add_spell("default", default_spell);
+  add_spell("spell1", spell1);
+  add_spell("spell2", spell2);
 }
 
-void TestCase::add_test_case(char *name, Launchable launchable) {
-  case_name.push_back(name);
-  cases.push_back(launchable);
+void SpellManager::add_spell(char *name, Launchable spell) {
+  spell_names.push_back(name);
+  spells.push_back(spell);
 }
