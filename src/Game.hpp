@@ -14,8 +14,6 @@
 
 class Game {
 public:
-  enum State { ACTIVE, PAUSE };
-
   static Game &get_instance() {
     static Game game;
     return game;
@@ -48,7 +46,6 @@ private:
   const int _width = 1110, _height = 800;
   Window _window{_width, _height, "Danmaku Editor"};
 
-  State _state;
   GLboolean _keys[1024];
   entt::registry _registry;
 

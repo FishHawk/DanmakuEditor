@@ -67,8 +67,7 @@ void Game::key_callback(
 }
 
 Game::Game()
-    : _state(State::ACTIVE), _keys(),
-      _resource_manager("/home/wh/Projects/DanmakuEditor/assets/"),
+    : _resource_manager("/home/wh/Projects/DanmakuEditor/assets/"),
       _spell_manager(_resource_manager) {
   auto program = _resource_manager.program_cache().handle("base"_hs);
   glm::mat4 projection = glm::ortho(
