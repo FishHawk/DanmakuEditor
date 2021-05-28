@@ -8,8 +8,6 @@
 
 #include "SpellManager.hpp"
 #include "Window.hpp"
-#include "graphic/Program.hpp"
-#include "graphic/Texture.hpp"
 #include "resources/ResourceManager.hpp"
 
 class Game {

@@ -5,7 +5,7 @@
 #include "../components/Launchable.hpp"
 #include "../components/Livetime.hpp"
 #include "../components/Moveable.hpp"
-#include "../components/Sprite.hpp"
+#include "../components/Renderable.hpp"
 #include "../util/debug.hpp"
 
 void MoveSystem::update() {

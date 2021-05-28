@@ -10,7 +10,7 @@
 #include "../components/Launchable.hpp"
 #include "../components/Livetime.hpp"
 #include "../components/Moveable.hpp"
-#include "../components/Sprite.hpp"
+#include "../components/Renderable.hpp"
 #include "../util/Timer.hpp"
 #include "../util/debug.hpp"
 
@@ -47,7 +47,7 @@ void Ui::update(entt::registry &registry) {
   static auto &spell_names = game.spell_manager().spell_names;
 
   append_component_number("Entity", registry.size());
-  append_component_number("Sprite", registry.view<Sprite>().size());
+  append_component_number("Renderable", registry.view<Renderable>().size());
   append_component_number("Moveable", registry.view<Moveable>().size());
   append_component_number("Launchable", registry.view<Launchable>().size());
   append_component_number("Livetime", registry.view<Livetime>().size());

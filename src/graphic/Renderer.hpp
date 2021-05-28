@@ -1,26 +1,32 @@
 #pragma once
 
+#include <entt/entt.hpp>
 #include <glad/glad.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
 
-#include "../components/Renderable.hpp"
-#include "../graphic/Renderer.hpp"
-#include "BaseSystem.hpp"
+#include "Program.hpp"
+#include "Sprite.hpp"
+#include "SpriteFrame.hpp"
+#include "Texture.hpp"
 
-class RenderSystem : BaseSystem {
+class Renderer {
 public:
-  RenderSystem(
-      entt::registry &registry,
+  Renderer(
       const entt::resource_cache<Program> &program_cache,
       const entt::resource_cache<Texture> &texture_cache,
       const entt::resource_cache<SpriteFrame> &sprite_frame_cache);
+  ~Renderer();
 
-  void update() override;
+  void push_sprite(Sprite sprite);
+
+  void render();
 
 private:
+  GLuint _VBO;
+  GLuint _quadVAO;
+
+  std::vector<Sprite> _sprites;
+
   const entt::resource_cache<Program> &_program_cache;
   const entt::resource_cache<Texture> &_texture_cache;
   const entt::resource_cache<SpriteFrame> &_sprite_frame_cache{};
-  Renderer _renderer;
 };

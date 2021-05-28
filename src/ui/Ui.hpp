@@ -32,7 +32,7 @@ private:
 
   const std::map<std::string, size_t> _component_names{
       {"Entity", 0},
-      {"Sprite", 1},
+      {"Renderable", 1},
       {"Moveable", 2},
       {"Launchable", 3},
       {"Livetime", 4}};

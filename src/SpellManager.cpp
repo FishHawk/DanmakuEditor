@@ -3,7 +3,7 @@
 #include <random>
 
 #include "components/Livetime.hpp"
-#include "components/Sprite.hpp"
+#include "components/Renderable.hpp"
 #include "generators/DirectionGenerator.hpp"
 #include "generators/ModifierGenerator.hpp"
 #include "generators/OriginGenerator.hpp"

@@ -5,14 +5,8 @@
 #include "../components/Launchable.hpp"
 #include "../components/Livetime.hpp"
 #include "../components/Moveable.hpp"
-#include "../components/Sprite.hpp"
+#include "../components/Renderable.hpp"
 #include "../util/debug.hpp"
-
-// static const std::vector<Sprite> sprites{
-//     Sprite{0, Position{0.f, 0.f}, Size{64.f, 64.f}, 0},
-//     Sprite{0, Position{0.f, 0.f}, Size{16.f, 16.f}, 0},
-//     Sprite{1, Position{0.f, 0.f}, Size{10.f, 10.f}, 0},
-// };
 
 void LaunchSystem::update() {
   auto view =
@@ -27,7 +21,7 @@ void LaunchSystem::update() {
       const auto child = _registry.create();
 
       _registry.emplace<Livetime>(child, Livetime{launchable_copy.duration});
-      _registry.emplace<Sprite>(child, launchable_copy.sprite_frame);
+      _registry.emplace<Renderable>(child, launchable_copy.sprite_frame);
 
       auto origin = launchable_copy.origin_generator(
           parent, moveable.position, cycle.time, i);

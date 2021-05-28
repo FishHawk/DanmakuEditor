@@ -3,6 +3,6 @@
 #include "../graphic/Texture.hpp"
 #include "Moveable.hpp"
 
-struct Sprite {
+struct Renderable {
   entt::id_type frame;
 };
