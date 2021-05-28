@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../graphic/SpriteFrame.hpp"
 #include "Moveable.hpp"
 
 struct Launchable {
@@ -11,7 +10,7 @@ struct Launchable {
   using ModifierGenerator = std::function<Moveable::Modifier(Direction)>;
   using LaunchableGenerator = std::function<Launchable()>;
 
-  entt::resource_handle<SpriteFrame> sprite_type;
+  entt::id_type sprite_frame;
   Time duration;
   RepetitionGenerator repetition_generator;
   OriginGenerator origin_generator;

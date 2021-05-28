@@ -5,9 +5,10 @@ using namespace entt::literals;
 RenderSystem::RenderSystem(
     entt::registry &registry,
     const entt::resource_cache<Program> &program_cache,
-    const entt::resource_cache<Texture> &texture_cache)
+    const entt::resource_cache<Texture> &texture_cache,
+    const entt::resource_cache<SpriteFrame> &sprite_frame_cache)
     : BaseSystem(registry), _program_cache(program_cache),
-      _texture_cache(texture_cache) {
+      _texture_cache(texture_cache), _sprite_frame_cache(sprite_frame_cache) {
 
   float vertices[] = {
       // pos      // tex
@@ -39,16 +40,20 @@ RenderSystem::~RenderSystem() {
 }
 
 void RenderSystem::draw_sprite(
-    const Texture &texture,
+    entt::id_type frame_id,
     glm::vec2 position,
     glm::vec2 size,
     float rotate,
     glm::vec3 color) {
+
+  const auto frame = _sprite_frame_cache.handle(frame_id);
+  frame->texture.bind();
+
   glm::mat4 model = glm::mat4(1.0f);
 
   model = glm::translate(model, glm::vec3(position, 0.0f));
   model = glm::rotate(model, glm::radians(rotate), glm::vec3(0.0f, 0.0f, 1.0f));
-  model = glm::scale(model, glm::vec3(size, 1.0f));
+  model = glm::scale(model, glm::vec3(frame->source_size, 1.0f));
 
   auto program = _program_cache.handle("base"_hs);
   program->use();
@@ -56,7 +61,6 @@ void RenderSystem::draw_sprite(
   program->set_vec3("spriteColor", color);
 
   glActiveTexture(GL_TEXTURE0);
-  texture.bind();
 
   glBindVertexArray(_quadVAO);
   glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -69,11 +73,12 @@ void RenderSystem::update() {
 
   auto view = _registry.view<const Sprite>();
   for (auto [entity, sprite] : view.each()) {
-    draw_sprite(
-        *(sprite.texture),
-        sprite.position,
-        sprite.size,
-        sprite.rotate,
-        sprite.color);
+    Position position{0, 0};
+
+    auto moveable = _registry.try_get<Moveable>(entity);
+    if (moveable != nullptr) {
+      position = moveable->position;
+    }
+    draw_sprite(sprite.frame, position, glm::vec2{1, 1}, 0, glm::vec3{0, 0, 0});
   }
 }

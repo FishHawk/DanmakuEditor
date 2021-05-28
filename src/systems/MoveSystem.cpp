@@ -30,11 +30,4 @@ void MoveSystem::update() {
       moveable.position = origin + moveable.offset;
     }
   }
-
-  {
-    auto view = _registry.view<Sprite, const Moveable>();
-    for (auto [entity, sprite, moveable] : view.each()) {
-      sprite.position = moveable.position;
-    }
-  }
 }

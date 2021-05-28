@@ -91,7 +91,8 @@ void Game::loop() {
   static RenderSystem render_system{
       _registry,
       _resource_manager.program_cache(),
-      _resource_manager.texture_cache()};
+      _resource_manager.texture_cache(),
+      _resource_manager.sprite_frame_cache()};
 
   util::Timer frame_timer, system_timer;
 

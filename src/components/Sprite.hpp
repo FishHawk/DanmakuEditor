@@ -4,9 +4,5 @@
 #include "Moveable.hpp"
 
 struct Sprite {
-  Texture const *texture;
-  Position position;
-  Size size;
-  float rotate;
-  glm::vec3 color;
+  entt::id_type frame;
 };

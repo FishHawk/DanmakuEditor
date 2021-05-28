@@ -27,16 +27,7 @@ void LaunchSystem::update() {
       const auto child = _registry.create();
 
       _registry.emplace<Livetime>(child, Livetime{launchable_copy.duration});
-
-      if (launchable_copy.sprite_type) {
-        auto sprite_frame = launchable_copy.sprite_type;
-        _registry.emplace<Sprite>(
-            child,
-            Sprite{
-                &(sprite_frame->texture),
-                Position{0, 0},
-                sprite_frame->source_size});
-      }
+      _registry.emplace<Sprite>(child, launchable_copy.sprite_frame);
 
       auto origin = launchable_copy.origin_generator(
           parent, moveable.position, cycle.time, i);

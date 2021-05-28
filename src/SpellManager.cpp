@@ -22,7 +22,7 @@ SpellManager::SpellManager(const ResourceManager &resource_manager)
   auto bullet = _resource_manager.sprite_frame_cache().handle("bullet"_hs);
 
   const auto spell1 = Launchable{
-      aircraft,
+      "aircraft"_hs,
       -1,
       repetition::at_start(),
       origin::at(Position{300, 400}),
@@ -30,7 +30,7 @@ SpellManager::SpellManager(const ResourceManager &resource_manager)
       nullptr,
       [=]() {
         return Launchable{
-            cannon,
+            "cannon"_hs,
             -1,
             repetition::at_start(4),
             origin::follow(),
@@ -40,7 +40,7 @@ SpellManager::SpellManager(const ResourceManager &resource_manager)
                 [](Direction d, Time t) { return 0.01 * t; })),
             [=]() {
               return Launchable{
-                  bullet,
+                  "bullet"_hs,
                   120,
                   repetition::every_n(1),
                   origin::at(),
@@ -52,7 +52,7 @@ SpellManager::SpellManager(const ResourceManager &resource_manager)
       }};
 
   const auto spell2 = Launchable{
-      aircraft,
+      "aircraft"_hs,
       -1,
       repetition::at_start(),
       origin::at(Position{300, 400}),
@@ -60,7 +60,7 @@ SpellManager::SpellManager(const ResourceManager &resource_manager)
       nullptr,
       [=]() {
         return Launchable{
-            cannon,
+            "cannon"_hs,
             12,
             repetition::every_n(12),
             origin::at([](auto p, auto t, auto i) {
@@ -71,7 +71,7 @@ SpellManager::SpellManager(const ResourceManager &resource_manager)
             [=]() {
               auto a = unifom();
               return Launchable{
-                  bullet,
+                  "bullet"_hs,
                   600,
                   repetition::every_n(1),
                   origin::at(),

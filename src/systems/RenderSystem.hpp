@@ -6,6 +6,7 @@
 
 #include "../components/Sprite.hpp"
 #include "../graphic/Program.hpp"
+#include "../graphic/SpriteFrame.hpp"
 #include "../graphic/Texture.hpp"
 #include "BaseSystem.hpp"
 
@@ -14,14 +15,15 @@ public:
   RenderSystem(
       entt::registry &registry,
       const entt::resource_cache<Program> &program_cache,
-      const entt::resource_cache<Texture> &texture_cache);
+      const entt::resource_cache<Texture> &texture_cache,
+      const entt::resource_cache<SpriteFrame> &sprite_frame_cache);
   ~RenderSystem();
 
   void update() override;
 
 private:
   void draw_sprite(
-      const Texture &texture,
+      entt::id_type frame,
       glm::vec2 position,
       glm::vec2 size = glm::vec2(10.0f, 10.0f),
       float rotate = 0.0f,
@@ -32,4 +34,5 @@ private:
 
   const entt::resource_cache<Program> &_program_cache;
   const entt::resource_cache<Texture> &_texture_cache;
+  const entt::resource_cache<SpriteFrame> &_sprite_frame_cache{};
 };
