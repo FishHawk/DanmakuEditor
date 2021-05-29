@@ -1,5 +1,6 @@
 #include "Renderer.hpp"
 
+#include "../util/debug.hpp"
 #include <glm/gtc/matrix_transform.hpp>
 
 using namespace entt::literals;
@@ -10,64 +11,81 @@ Renderer::Renderer(
     const entt::resource_cache<SpriteFrame> &sprite_frame_cache)
     : _program_cache(program_cache), _texture_cache(texture_cache),
       _sprite_frame_cache(sprite_frame_cache) {
-
-  float vertices[] = {
-      // pos      // tex
-      -0.5f, 0.5f,  0.0f, 1.0f, //
-      0.5f,  -0.5f, 1.0f, 0.0f, //
-      -0.5f, -0.5f, 0.0f, 0.0f, //
-
-      -0.5f, 0.5f,  0.0f, 1.0f, //
-      0.5f,  0.5f,  1.0f, 1.0f, //
-      0.5f,  -0.5f, 1.0f, 0.0f  //
-  };
-
-  glGenVertexArrays(1, &this->_quadVAO);
   glGenBuffers(1, &_VBO);
-
   glBindBuffer(GL_ARRAY_BUFFER, _VBO);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-  glBindVertexArray(this->_quadVAO);
+  glGenVertexArrays(1, &_VAO);
+  glBindVertexArray(_VAO);
+
+  // position attribute
+  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)0);
   glEnableVertexAttribArray(0);
-  glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void *)0);
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
-  glBindVertexArray(0);
+  // texture coord attribute
+  glVertexAttribPointer(
+      1, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(2 * sizeof(float)));
+  glEnableVertexAttribArray(1);
+  // color attribute
+  glVertexAttribPointer(
+      2, 4, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(4 * sizeof(float)));
+  glEnableVertexAttribArray(2);
 }
 
 Renderer::~Renderer() {
-  glDeleteVertexArrays(1, &_quadVAO);
+  glDeleteVertexArrays(1, &_VAO);
   glDeleteBuffers(1, &_VBO);
 }
 
-void Renderer::push_sprite(Sprite sprite) { _sprites.push_back(sprite); }
+void Renderer::push_sprite(Sprite sprite) {
+  const auto frame = _sprite_frame_cache.handle(sprite.frame_id);
+
+  auto model = glm::mat2{
+      {cos(sprite.rotation), sin(sprite.rotation)},
+      {-sin(sprite.rotation), cos(sprite.rotation)}};
+
+  auto &size = frame->source_size;
+  auto &position = sprite.position;
+  auto &color = sprite.color;
+
+  auto p_tl = position + model * (size * glm::vec2{-0.5, 0.5});
+  auto p_tr = position + model * (size * glm::vec2{0.5, 0.5});
+  auto p_bl = position + model * (size * glm::vec2{-0.5, -0.5});
+  auto p_br = position + model * (size * glm::vec2{0.5, -0.5});
+
+  auto t_tl = glm::vec2{0, 1};
+  auto t_tr = glm::vec2{1, 1};
+  auto t_bl = glm::vec2{0, 0};
+  auto t_br = glm::vec2{1, 0};
+
+  auto &x = _groups[&(frame->texture)];
+  x.emplace_back(p_tr, t_tr, color); // top right
+  x.emplace_back(p_br, t_br, color); // bottom right
+  x.emplace_back(p_bl, t_bl, color); // bottom left
+
+  x.emplace_back(p_bl, t_bl, color); // bottom left
+  x.emplace_back(p_tl, t_tl, color); // top right
+  x.emplace_back(p_tr, t_tr, color); // top right
+}
 
 void Renderer::render() {
   glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  for (const auto sprite : _sprites) {
-    const auto frame = _sprite_frame_cache.handle(sprite.frame_id);
-    frame->texture.bind();
+  auto program = _program_cache.handle("base"_hs);
+  program->use();
 
-    glm::mat4 model = glm::mat4(1.0f);
-
-    model = glm::translate(model, glm::vec3(sprite.position, 0.0f));
-    model = glm::rotate(
-        model, glm::radians(sprite.rotation), glm::vec3(0.0f, 0.0f, 1.0f));
-    model = glm::scale(model, glm::vec3(frame->source_size, 1.0f));
-
-    auto program = _program_cache.handle("base"_hs);
-    program->use();
-    program->set_mat4("model", model);
-    program->set_vec3("spriteColor", sprite.color);
-
+  for (auto &[texture, group] : _groups) {
     glActiveTexture(GL_TEXTURE0);
+    texture->bind();
 
-    glBindVertexArray(_quadVAO);
-    glDrawArrays(GL_TRIANGLES, 0, 6);
+    glBindVertexArray(_VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, _VBO);
+    glBufferData(
+        GL_ARRAY_BUFFER,
+        group.size() * sizeof(Vertex),
+        group.data(),
+        GL_STREAM_DRAW);
+    glDrawArrays(GL_TRIANGLES, 0, group.size());
     glBindVertexArray(0);
   }
-
-  _sprites.clear();
+  _groups.clear();
 }

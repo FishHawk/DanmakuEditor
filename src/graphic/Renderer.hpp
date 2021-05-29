@@ -8,6 +8,12 @@
 #include "SpriteFrame.hpp"
 #include "Texture.hpp"
 
+struct Vertex {
+  glm::vec2 position;
+  glm::vec2 tex_coords;
+  glm::vec4 color;
+};
+
 class Renderer {
 public:
   Renderer(
@@ -22,9 +28,13 @@ public:
 
 private:
   GLuint _VBO;
-  GLuint _quadVAO;
+  GLuint _VAO;
 
   std::vector<Sprite> _sprites;
+
+  std::map<Texture*, std::vector<Vertex>> _groups;
+
+  std::vector<Vertex> _vertices;
 
   const entt::resource_cache<Program> &_program_cache;
   const entt::resource_cache<Texture> &_texture_cache;

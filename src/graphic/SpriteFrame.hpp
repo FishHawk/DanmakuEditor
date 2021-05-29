@@ -4,7 +4,7 @@
 #include "Texture.hpp"
 
 struct SpriteFrame {
-  const Texture &texture;
+  Texture &texture;
   Rect frame;
   Size source_size;
 };

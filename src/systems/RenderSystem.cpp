@@ -23,7 +23,7 @@ void RenderSystem::update() {
     }
 
     _renderer.push_sprite(Sprite{
-        renderable.frame, position, glm::vec2{1, 1}, 0, glm::vec3{0, 0, 0}});
+        renderable.frame, position, glm::vec2{1, 1}, 0, glm::vec4{1, 1, 1, 1}});
   }
 
   _renderer.render();

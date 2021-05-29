@@ -89,7 +89,7 @@ void Ui::update(entt::registry &registry) {
     ImPlot::EndPlot();
   }
 
-  ImPlot::SetNextPlotLimits(0, record_time, -0.001, 10000);
+  ImPlot::SetNextPlotLimits(0, record_time, -0.001, 100000);
   if (ImPlot::BeginPlot("Component number", "", "", ImVec2(500, 200))) {
     ImPlot::SetLegendLocation(ImPlotLocation_::ImPlotLocation_NorthEast);
     for (auto &[name, index] : _component_names) {

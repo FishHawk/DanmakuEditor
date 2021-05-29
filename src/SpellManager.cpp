@@ -17,10 +17,6 @@ auto unifom = std::bind(distribution, generator);
 
 SpellManager::SpellManager(const ResourceManager &resource_manager)
     : _resource_manager(resource_manager) {
-  auto aircraft = _resource_manager.sprite_frame_cache().handle("aircraft"_hs);
-  auto cannon = _resource_manager.sprite_frame_cache().handle("cannon"_hs);
-  auto bullet = _resource_manager.sprite_frame_cache().handle("bullet"_hs);
-
   const auto spell1 = Launchable{
       "aircraft"_hs,
       -1,
@@ -32,9 +28,9 @@ SpellManager::SpellManager(const ResourceManager &resource_manager)
         return Launchable{
             "cannon"_hs,
             -1,
-            repetition::at_start(4),
+            repetition::at_start(128),
             origin::follow(),
-            direction::circle(0, glm::radians(360.f), 4),
+            direction::circle(0, glm::radians(360.f), 128),
             modifier::by_position(modifier::polar_rotated(
                 [](Direction d, Time t) { return 32 + 16 * sin(0.1 * t); },
                 [](Direction d, Time t) { return 0.01 * t; })),
