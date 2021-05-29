@@ -56,14 +56,14 @@ void Renderer::push_sprite(Sprite sprite) {
   auto t_bl = glm::vec2{0, 0};
   auto t_br = glm::vec2{1, 0};
 
-  auto &x = _groups[&(frame->texture)];
-  x.emplace_back(p_tr, t_tr, color); // top right
-  x.emplace_back(p_br, t_br, color); // bottom right
-  x.emplace_back(p_bl, t_bl, color); // bottom left
+  auto &g = _groups[frame->texture_id];
+  g.emplace_back(p_tr, t_tr, color); // top right
+  g.emplace_back(p_br, t_br, color); // bottom right
+  g.emplace_back(p_bl, t_bl, color); // bottom left
 
-  x.emplace_back(p_bl, t_bl, color); // bottom left
-  x.emplace_back(p_tl, t_tl, color); // top right
-  x.emplace_back(p_tr, t_tr, color); // top right
+  g.emplace_back(p_bl, t_bl, color); // bottom left
+  g.emplace_back(p_tl, t_tl, color); // top right
+  g.emplace_back(p_tr, t_tr, color); // top right
 }
 
 void Renderer::render() {
@@ -73,9 +73,9 @@ void Renderer::render() {
   auto program = _program_cache.handle("base"_hs);
   program->use();
 
-  for (auto &[texture, group] : _groups) {
+  for (auto &[texture_id, group] : _groups) {
     glActiveTexture(GL_TEXTURE0);
-    texture->bind();
+    _texture_cache.handle(texture_id)->bind();
 
     glBindVertexArray(_VAO);
     glBindBuffer(GL_ARRAY_BUFFER, _VBO);
@@ -86,6 +86,6 @@ void Renderer::render() {
         GL_STREAM_DRAW);
     glDrawArrays(GL_TRIANGLES, 0, group.size());
     glBindVertexArray(0);
+    group.clear();
   }
-  _groups.clear();
 }

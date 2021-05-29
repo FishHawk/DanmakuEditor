@@ -30,11 +30,7 @@ private:
   GLuint _VBO;
   GLuint _VAO;
 
-  std::vector<Sprite> _sprites;
-
-  std::map<Texture*, std::vector<Vertex>> _groups;
-
-  std::vector<Vertex> _vertices;
+  std::map<entt::id_type, std::vector<Vertex>> _groups;
 
   const entt::resource_cache<Program> &_program_cache;
   const entt::resource_cache<Texture> &_texture_cache;
