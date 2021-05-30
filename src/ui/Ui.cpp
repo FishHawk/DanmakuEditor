@@ -59,8 +59,14 @@ void Ui::update(entt::registry &registry) {
 
   // Define gui
   ImGui::Begin("Console");
-  ImGui::SetWindowPos(ImVec2(600.f, 0.f));
-  ImGui::SetWindowSize(ImVec2(510.f, 800.f));
+
+  static bool is_first = true;
+  if (is_first) {
+    ImGui::SetWindowPos(ImVec2(0.f, 0.f));
+    ImGui::SetWindowSize(ImVec2(600.f, 800.f));
+    ImGui::SetWindowCollapsed(true);
+  }
+  is_first = false;
 
   static int spell_index = 0;
   if (ImGui::Button("Run")) {

@@ -44,7 +44,7 @@ private:
       const std::string &name, std::function<void(void)> callback);
   void render_ui();
 
-  const int _width = 1110, _height = 800;
+  const int _width = 600, _height = 800;
   Window _window{_width, _height, "Danmaku Editor"};
 
   GLboolean _keys[1024];
