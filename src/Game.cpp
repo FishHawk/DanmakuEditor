@@ -52,6 +52,8 @@ void Game::mouse_callback(GLFWwindow *window, double xpos, double ypos) {
 }
 
 void Game::scroll_callback(GLFWwindow *window, double xoffset, double yoffset) {
+  auto &camera = get_instance().camera();
+  camera.zoom(1 + yoffset * 0.12);
 }
 
 void Game::key_callback(
@@ -76,9 +78,7 @@ Game::Game()
           _resource_manager.texture_cache(),
           _resource_manager.sprite_frame_cache()) {
   _renderer.camera().set_screen_size(_width, _height);
-  _renderer.camera().set_center(0, 0);
   _renderer.camera().set_size(0.5f * _width, 0.5f * _height);
-  _renderer.camera().set_rotation(0);
 
   run_spell(0);
 }
