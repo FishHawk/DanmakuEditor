@@ -10,17 +10,10 @@
 
 class RenderSystem : BaseSystem {
 public:
-  RenderSystem(
-      entt::registry &registry,
-      const entt::resource_cache<Program> &program_cache,
-      const entt::resource_cache<Texture> &texture_cache,
-      const entt::resource_cache<SpriteFrame> &sprite_frame_cache);
+  RenderSystem(entt::registry &registry, Renderer &renderer);
 
   void update() override;
 
 private:
-  const entt::resource_cache<Program> &_program_cache;
-  const entt::resource_cache<Texture> &_texture_cache;
-  const entt::resource_cache<SpriteFrame> &_sprite_frame_cache{};
-  Renderer _renderer;
+  Renderer& _renderer;
 };

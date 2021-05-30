@@ -8,6 +8,7 @@
 
 #include "SpellManager.hpp"
 #include "Window.hpp"
+#include "graphic/Renderer.hpp"
 #include "resources/ResourceManager.hpp"
 
 class Game {
@@ -30,6 +31,8 @@ public:
   void run_spell(size_t index);
   const auto &spell_manager() { return _spell_manager; }
 
+  auto &camera() { return _renderer.camera(); }
+
 private:
   Game();
   ~Game() = default;
@@ -49,4 +52,6 @@ private:
 
   ResourceManager _resource_manager;
   SpellManager _spell_manager;
+
+  Renderer _renderer;
 };

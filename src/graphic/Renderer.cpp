@@ -67,11 +67,16 @@ void Renderer::push_sprite(Sprite sprite) {
 }
 
 void Renderer::render() {
+  auto screen_size = _camera.screen_size();
+  glViewport(0, 0, screen_size.x, screen_size.y);
+
   glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   auto program = _program_cache.handle("base"_hs);
   program->use();
+  program->set_mat4("projection", _camera.transform());
+  program->set_int("image", 0);
 
   for (auto &[texture_id, group] : _groups) {
     glActiveTexture(GL_TEXTURE0);

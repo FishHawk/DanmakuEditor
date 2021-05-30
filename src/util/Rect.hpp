@@ -16,6 +16,13 @@ public:
   Vec2<T> position() const { return Vec2<T>{_x, _y}; }
   Vec2<T> size() const { return Vec2<T>{_width, _height}; }
 
+  void translate(T dx, T dy) {
+    _x += dx;
+    _y += dy;
+  }
+
+  void translate(const Vec2<T> &offset) { move(offset.x, offset.y); }
+
   T x() const { return _x; }
   T y() const { return _y; }
 

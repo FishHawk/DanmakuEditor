@@ -23,7 +23,9 @@ using namespace entt::literals;
 
 void Game::framebuffer_size_callback(
     GLFWwindow *window, int width, int height) {
-  glViewport(0, 0, width, height);
+  auto &camera = get_instance().camera();
+  camera.set_screen_size(width, height);
+  camera.set_size(0.5f * width, 0.5f * height);
 }
 
 void Game::mouse_callback(GLFWwindow *window, double xpos, double ypos) {
@@ -68,18 +70,15 @@ void Game::key_callback(
 
 Game::Game()
     : _resource_manager("/home/wh/Projects/DanmakuEditor/assets/"),
-      _spell_manager(_resource_manager) {
-  auto program = _resource_manager.program_cache().handle("base"_hs);
-  glm::mat4 projection = glm::ortho(
-      0.0f,
-      static_cast<float>(_width),
-      static_cast<float>(_height),
-      0.0f,
-      -1.0f,
-      1.0f);
-  program->use();
-  program->set_int("image", 0);
-  program->set_mat4("projection", projection);
+      _spell_manager(_resource_manager),
+      _renderer(
+          _resource_manager.program_cache(),
+          _resource_manager.texture_cache(),
+          _resource_manager.sprite_frame_cache()) {
+  _renderer.camera().set_screen_size(_width, _height);
+  _renderer.camera().set_center(0, 0);
+  _renderer.camera().set_size(0.5f * _width, 0.5f * _height);
+  _renderer.camera().set_rotation(0);
 
   run_spell(0);
 }
@@ -88,11 +87,7 @@ void Game::loop() {
   static LivetimeSystem livetime_system{_registry};
   static MoveSystem move_system{_registry};
   static LaunchSystem launch_system{_registry};
-  static RenderSystem render_system{
-      _registry,
-      _resource_manager.program_cache(),
-      _resource_manager.texture_cache(),
-      _resource_manager.sprite_frame_cache()};
+  static RenderSystem render_system{_registry, _renderer};
 
   util::Timer frame_timer, system_timer;
 
@@ -114,7 +109,17 @@ void Game::loop() {
   }
 }
 
-void Game::process_input() {}
+void Game::process_input() {
+  auto speed = 5;
+  if (_keys[GLFW_KEY_W])
+    _renderer.camera().move(0, -speed);
+  if (_keys[GLFW_KEY_S])
+    _renderer.camera().move(0, speed);
+  if (_keys[GLFW_KEY_A])
+    _renderer.camera().move(-speed, 0);
+  if (_keys[GLFW_KEY_D])
+    _renderer.camera().move(speed, 0);
+}
 
 void Game::update_with_timer(
     const std::string &name, std::function<void(void)> callback) {

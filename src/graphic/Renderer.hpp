@@ -3,6 +3,7 @@
 #include <entt/entt.hpp>
 #include <glad/glad.h>
 
+#include "Camera.hpp"
 #include "Program.hpp"
 #include "Sprite.hpp"
 #include "SpriteFrame.hpp"
@@ -26,13 +27,17 @@ public:
 
   void render();
 
+  Camera &camera() { return _camera; }
+
 private:
   GLuint _VBO;
   GLuint _VAO;
 
   std::map<entt::id_type, std::vector<Vertex>> _groups;
 
+  Camera _camera;
+
   const entt::resource_cache<Program> &_program_cache;
   const entt::resource_cache<Texture> &_texture_cache;
-  const entt::resource_cache<SpriteFrame> &_sprite_frame_cache{};
+  const entt::resource_cache<SpriteFrame> &_sprite_frame_cache;
 };

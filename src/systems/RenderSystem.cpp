@@ -2,15 +2,8 @@
 
 using namespace entt::literals;
 
-RenderSystem::RenderSystem(
-    entt::registry &registry,
-    const entt::resource_cache<Program> &program_cache,
-    const entt::resource_cache<Texture> &texture_cache,
-    const entt::resource_cache<SpriteFrame> &sprite_frame_cache)
-    : BaseSystem(registry),
-      _renderer(program_cache, texture_cache, sprite_frame_cache),
-      _program_cache(program_cache), _texture_cache(texture_cache),
-      _sprite_frame_cache(sprite_frame_cache) {}
+RenderSystem::RenderSystem(entt::registry &registry, Renderer &renderer)
+    : BaseSystem(registry), _renderer(renderer) {}
 
 void RenderSystem::update() {
   auto view = _registry.view<const Renderable>();
