@@ -1,7 +1,6 @@
 #pragma once
 
 #include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtx/matrix_transform_2d.hpp>
 
 #include "../util/base.hpp"
 
@@ -10,13 +9,9 @@ public:
   const Vec2i &screen_size() const { return _screen_size; }
   const Mat4f &transform() const {
     if (!_is_transform_updated) {
-      // Mat3f view = Mat3f(1.0f);
-      // view = glm::translate(view, _center);
-      // view = glm::rotate(view, _rotation);
-
       Mat4f view = Mat4f(1.0f);
-      view = glm::translate(view, glm::vec3{_center, 0});
-      // view = glm::rotate(view, _rotation);
+      view = glm::translate(view, Vec3f{_center, 0});
+      view = glm::rotate(view, _rotation, Vec3f{0, 0, 1});
 
       Mat4f proj =
           glm::ortho(-_size.x, _size.x, _size.y, -_size.y, -1.0f, 1.0f);

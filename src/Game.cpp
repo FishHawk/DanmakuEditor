@@ -110,7 +110,7 @@ void Game::loop() {
 }
 
 void Game::process_input() {
-  auto speed = 5;
+  float speed = 5, rotate_speed = glm::radians(360.f) / 5 / 60;
   if (_keys[GLFW_KEY_W])
     _renderer.camera().move(0, -speed);
   if (_keys[GLFW_KEY_S])
@@ -119,6 +119,10 @@ void Game::process_input() {
     _renderer.camera().move(-speed, 0);
   if (_keys[GLFW_KEY_D])
     _renderer.camera().move(speed, 0);
+  if (_keys[GLFW_KEY_Q])
+    _renderer.camera().rotate(rotate_speed);
+  if (_keys[GLFW_KEY_E])
+    _renderer.camera().rotate(-rotate_speed);
 }
 
 void Game::update_with_timer(
