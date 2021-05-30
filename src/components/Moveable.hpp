@@ -5,7 +5,7 @@
 
 #include <entt/entt.hpp>
 
-#include "./math.hpp"
+#include "../util/base.hpp"
 
 using Position = glm::vec2;
 using Velocity = glm::vec2;

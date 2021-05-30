@@ -21,7 +21,7 @@ SpellManager::SpellManager(const ResourceManager &resource_manager)
       "aircraft"_hs,
       -1,
       repetition::at_start(),
-      origin::at(Position{300, 400}),
+      origin::at(Position{0, 0}),
       nullptr,
       nullptr,
       [=]() {

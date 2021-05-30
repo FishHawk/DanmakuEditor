@@ -1,10 +1,10 @@
 #pragma once
 
-#include "../components/math.hpp"
+#include "../util/Rect.hpp"
 #include "Texture.hpp"
 
 struct SpriteFrame {
   entt::id_type texture_id;
-  Rect frame;
+  Rect<int> frame;
   Size source_size;
 };
