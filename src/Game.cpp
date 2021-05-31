@@ -62,6 +62,9 @@ void Game::key_callback(
 
   if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
     game.window().close();
+  if (key == GLFW_KEY_F1 && action == GLFW_PRESS)
+    Ui::get_instance().toggle_console_window();
+
   if (key >= 0 && key < 1024) {
     if (action == GLFW_PRESS)
       game._keys[key] = GL_TRUE;

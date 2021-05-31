@@ -18,9 +18,13 @@ public:
 
   void append_system_time(const std::string &name, double value);
 
+  void toggle_console_window() {
+    _is_console_window_visible = !_is_console_window_visible;
+  }
+
 private:
   Ui();
-  ~Ui() = default;
+  ~Ui();
   Ui(const Ui &other) = delete;
   Ui &operator=(const Ui &) = delete;
 
@@ -39,4 +43,7 @@ private:
   std::array<std::deque<unsigned int>, record_time> _component_numbers;
 
   void append_component_number(const std::string &name, unsigned int value);
+
+  bool _is_console_window_visible = false;
+  void update_console_window(entt::registry &registry);
 };

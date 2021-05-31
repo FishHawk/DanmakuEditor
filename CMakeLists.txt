@@ -46,7 +46,7 @@ FetchContent_MakeAvailable(glm)
 
 FetchContent_Declare(imgui
   GIT_REPOSITORY https://github.com/ocornut/imgui
-  GIT_TAG v1.82
+  GIT_TAG origin/docking
 )
 FetchContent_GetProperties(imgui)
 if(NOT imgui_POPULATED)

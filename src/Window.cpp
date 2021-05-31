@@ -1,7 +1,5 @@
 #include "Window.hpp"
 
-#include <imgui_impl_glfw.h>
-#include <imgui_impl_opengl3.h>
 #include <spdlog/spdlog.h>
 
 #include "Game.hpp"
@@ -31,30 +29,9 @@ Window::Window(int width, int height, std::string title)
   glfwSetCursorPosCallback(_window, Game::mouse_callback);
   glfwSetScrollCallback(_window, Game::scroll_callback);
   glfwSetKeyCallback(_window, Game::key_callback);
-
-  IMGUI_CHECKVERSION();
-  _ctx_imgui = ImGui::CreateContext();
-  ImGui::SetCurrentContext(_ctx_imgui);
-  _ctx_implot = ImPlot::CreateContext();
-  ImPlot::SetCurrentContext(_ctx_implot);
-
-  // setup imgui io
-  auto &io = ImGui::GetIO();
-  io.IniFilename = nullptr;
-
-  // setup imgui style
-  ImGui::StyleColorsDark();
-
-  // setup platform/renderer bindings
-  ImGui_ImplGlfw_InitForOpenGL(_window, true);
-  ImGui_ImplOpenGL3_Init("#version 330");
 }
 
 Window::~Window() {
-  ImGui_ImplOpenGL3_Shutdown();
-  ImGui_ImplGlfw_Shutdown();
-  ImGui::DestroyContext();
-
   glfwDestroyWindow(_window);
   glfwTerminate();
 };
