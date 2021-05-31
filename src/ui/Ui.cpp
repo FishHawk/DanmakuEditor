@@ -109,12 +109,6 @@ void Ui::update_console_window(entt::registry &registry) {
     // Define gui
     ImGui::Begin("Console");
 
-    static bool is_first = true;
-    if (is_first) {
-      ImGui::SetWindowPos(ImVec2(0.f, 0.f));
-    }
-    is_first = false;
-
     static int spell_index = 0;
     if (ImGui::Button("Run")) {
       game.run_spell(spell_index);

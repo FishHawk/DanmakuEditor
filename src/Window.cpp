@@ -34,4 +34,16 @@ Window::Window(int width, int height, std::string title)
 Window::~Window() {
   glfwDestroyWindow(_window);
   glfwTerminate();
-};
+}
+
+bool Window::should_close() const { return glfwWindowShouldClose(_window); }
+
+void Window::close() { glfwSetWindowShouldClose(_window, true); }
+
+void Window::display() { glfwSwapBuffers(_window); }
+
+void Window::poll_events() { glfwPollEvents(); }
+
+bool Window::is_key_pressed(Key key) {
+  return glfwGetKey(_window, static_cast<int>(key));
+}

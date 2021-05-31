@@ -9,23 +9,26 @@
 #include <imgui.h>
 #include <implot.h>
 
+#include "KeyEvent.hpp"
+
 class Window {
 public:
   Window(int width, int height, std::string title);
+
   ~Window();
 
-  bool is_open() const { return !glfwWindowShouldClose(_window); }
+  bool should_close() const;
 
-  void close() const { glfwSetWindowShouldClose(_window, true); };
+  void close();
 
-  void display() { glfwSwapBuffers(_window); }
-  void poll_events() { glfwPollEvents(); }
+  void display();
+
+  void poll_events();
+
+  bool is_key_pressed(Key key);
 
 private:
   GLFWwindow *_window;
   int _width, _height;
   std::string _title;
-
-  ImGuiContext *_ctx_imgui;
-  ImPlotContext *_ctx_implot;
 };

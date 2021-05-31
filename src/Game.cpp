@@ -3,6 +3,7 @@
 #include <entt/entt.hpp>
 #include <glm/glm.hpp>
 
+#include "KeyEvent.hpp"
 #include "components/Launchable.hpp"
 #include "components/Livetime.hpp"
 #include "components/Moveable.hpp"
@@ -64,13 +65,6 @@ void Game::key_callback(
     game.window().close();
   if (key == GLFW_KEY_F1 && action == GLFW_PRESS)
     Ui::get_instance().toggle_console_window();
-
-  if (key >= 0 && key < 1024) {
-    if (action == GLFW_PRESS)
-      game._keys[key] = GL_TRUE;
-    else if (action == GLFW_RELEASE)
-      game._keys[key] = GL_FALSE;
-  }
 }
 
 Game::Game()
@@ -94,7 +88,7 @@ void Game::loop() {
 
   util::Timer frame_timer, system_timer;
 
-  while (_window.is_open()) {
+  while (!_window.should_close()) {
     Ui::get_instance().append_system_time("All", frame_timer.elapsed());
     frame_timer.restart();
 
@@ -114,18 +108,25 @@ void Game::loop() {
 
 void Game::process_input() {
   float speed = 5, rotate_speed = glm::radians(360.f) / 5 / 60;
-  if (_keys[GLFW_KEY_W])
+  if (_window.is_key_pressed(Key::W)) {
     _renderer.camera().move(0, -speed);
-  if (_keys[GLFW_KEY_S])
+  }
+  if (_window.is_key_pressed(Key::S)) {
     _renderer.camera().move(0, speed);
-  if (_keys[GLFW_KEY_A])
+  }
+  if (_window.is_key_pressed(Key::A)) {
     _renderer.camera().move(-speed, 0);
-  if (_keys[GLFW_KEY_D])
+  }
+  if (_window.is_key_pressed(Key::D)) {
     _renderer.camera().move(speed, 0);
-  if (_keys[GLFW_KEY_Q])
+  }
+
+  if (_window.is_key_pressed(Key::Q)) {
     _renderer.camera().rotate(rotate_speed);
-  if (_keys[GLFW_KEY_E])
+  }
+  if (_window.is_key_pressed(Key::E)) {
     _renderer.camera().rotate(-rotate_speed);
+  }
 }
 
 void Game::update_with_timer(
