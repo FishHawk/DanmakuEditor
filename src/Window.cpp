@@ -1,9 +1,7 @@
 #include "Window.hpp"
 
-#include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
-#include <implot.h>
 #include <spdlog/spdlog.h>
 
 #include "Game.hpp"
@@ -35,8 +33,10 @@ Window::Window(int width, int height, std::string title)
   glfwSetKeyCallback(_window, Game::key_callback);
 
   IMGUI_CHECKVERSION();
-  ImGui::CreateContext();
-  ImPlot::CreateContext();
+  _ctx_imgui = ImGui::CreateContext();
+  ImGui::SetCurrentContext(_ctx_imgui);
+  _ctx_implot = ImPlot::CreateContext();
+  ImPlot::SetCurrentContext(_ctx_implot);
 
   // setup imgui io
   auto &io = ImGui::GetIO();
@@ -49,3 +49,12 @@ Window::Window(int width, int height, std::string title)
   ImGui_ImplGlfw_InitForOpenGL(_window, true);
   ImGui_ImplOpenGL3_Init("#version 330");
 }
+
+Window::~Window() {
+  ImGui_ImplOpenGL3_Shutdown();
+  ImGui_ImplGlfw_Shutdown();
+  ImGui::DestroyContext();
+
+  glfwDestroyWindow(_window);
+  glfwTerminate();
+};

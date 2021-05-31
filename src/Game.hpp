@@ -32,6 +32,7 @@ public:
   const auto &spell_manager() { return _spell_manager; }
 
   auto &camera() { return _renderer.camera(); }
+  auto &window() { return _window; }
 
 private:
   Game();

@@ -61,7 +61,7 @@ void Game::key_callback(
   auto &game = get_instance();
 
   if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-    glfwSetWindowShouldClose(window, GL_TRUE);
+    game.window().close();
   if (key >= 0 && key < 1024) {
     if (action == GLFW_PRESS)
       game._keys[key] = GL_TRUE;
@@ -91,7 +91,7 @@ void Game::loop() {
 
   util::Timer frame_timer, system_timer;
 
-  while (!_window.should_close()) {
+  while (_window.is_open()) {
     Ui::get_instance().append_system_time("All", frame_timer.elapsed());
     frame_timer.restart();
 
@@ -105,7 +105,7 @@ void Game::loop() {
     update_with_timer("Render", [this]() { render_system.update(); });
     update_with_timer("Ui", [this]() { Ui::get_instance().update(_registry); });
 
-    _window.swap_buffers();
+    _window.display();
   }
 }
 
