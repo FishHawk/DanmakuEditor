@@ -1,6 +1,5 @@
 #include "Game.hpp"
 
-#include <entt/entt.hpp>
 #include <glm/glm.hpp>
 
 #include "KeyEvent.hpp"
@@ -22,51 +21,6 @@
 
 using namespace entt::literals;
 
-void Game::framebuffer_size_callback(
-    GLFWwindow *window, int width, int height) {
-  auto &camera = get_instance().camera();
-  camera.set_screen_size(width, height);
-  camera.set_size(0.5f * width, 0.5f * height);
-}
-
-void Game::mouse_callback(GLFWwindow *window, double xpos, double ypos) {
-  static float xlast = 0;
-  static float ylast = 0;
-  static bool is_first = true;
-
-  if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) != GLFW_PRESS) {
-    is_first = true;
-    return;
-  }
-
-  if (is_first) {
-    xlast = xpos;
-    ylast = ypos;
-    is_first = false;
-  }
-
-  float xoffset = xpos - xlast;
-  float yoffset = ylast - ypos;
-
-  xlast = xpos;
-  ylast = ypos;
-}
-
-void Game::scroll_callback(GLFWwindow *window, double xoffset, double yoffset) {
-  auto &camera = get_instance().camera();
-  camera.zoom(1 + yoffset * 0.12);
-}
-
-void Game::key_callback(
-    GLFWwindow *window, int key, int scancode, int action, int mods) {
-  auto &game = get_instance();
-
-  if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-    game.window().close();
-  if (key == GLFW_KEY_F1 && action == GLFW_PRESS)
-    Ui::get_instance().toggle_console_window();
-}
-
 Game::Game()
     : _resource_manager("/home/wh/Projects/DanmakuEditor/assets/"),
       _spell_manager(_resource_manager),
@@ -78,6 +32,31 @@ Game::Game()
   _renderer.camera().set_size(0.5f * _width, 0.5f * _height);
 
   run_spell(0);
+
+  auto &dispatcher = _window.input_dispatcher();
+  dispatcher.sink<ResizeEvent>().connect<&Game::on_resize_event>(this);
+  dispatcher.sink<KeyEvent>().connect<&Game::on_key_event>(this);
+  dispatcher.sink<ScrollEvent>().connect<&Game::on_scroll_event>(this);
+}
+
+void Game::on_resize_event(const ResizeEvent &e) {
+  auto &camera = _renderer.camera();
+  camera.set_screen_size(e.width, e.height);
+  camera.set_size(0.5f * e.width, 0.5f * e.height);
+}
+
+void Game::on_key_event(const KeyEvent &e) {
+  if (e.key == Key::Escape && e.state == KeyState::Press)
+    _window.close();
+  if (e.key == Key::F1 && e.state == KeyState::Press)
+    Ui::get_instance().toggle_console_window();
+}
+
+void Game::on_scroll_event(const ScrollEvent &e) {
+  if (e.axis == ScrollEvent::Axis::Y) {
+    auto &camera = _renderer.camera();
+    camera.zoom(1 + e.offset * 0.12);
+  }
 }
 
 void Game::loop() {

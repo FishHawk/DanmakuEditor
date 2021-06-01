@@ -1,10 +1,6 @@
 #pragma once
 
-#define GLFW_INCLUDE_NONE
-
-#include <GLFW/glfw3.h>
 #include <entt/entt.hpp>
-#include <glad/glad.h>
 
 #include "SpellManager.hpp"
 #include "Window.hpp"
@@ -44,6 +40,10 @@ private:
   void update_with_timer(
       const std::string &name, std::function<void(void)> callback);
   void render_ui();
+
+  void on_resize_event(const ResizeEvent &e);
+  void on_key_event(const KeyEvent &e);
+  void on_scroll_event(const ScrollEvent &e);
 
   const int _width = 600, _height = 800;
   Window _window{_width, _height, "Danmaku Editor"};

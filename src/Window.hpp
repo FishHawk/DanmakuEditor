@@ -1,8 +1,8 @@
 #pragma once
 
-#define GLFW_INCLUDE_NONE
-
 #include <string>
+
+#include <entt/entt.hpp>
 
 #include "KeyEvent.hpp"
 
@@ -17,10 +17,8 @@ public:
   Window(const Window &other) = delete;
   Window &operator=(const Window &) = delete;
 
-  Window(Window &&other);
+  Window(Window &&other) = delete;
   Window &operator=(Window &&) = delete;
-
-  operator GLFWwindow *() { return _handle; }
 
   void make_context_current();
 
@@ -31,6 +29,8 @@ public:
   void display();
 
   bool is_key_pressed(Key key);
+
+  entt::dispatcher &input_dispatcher();
 
 private:
   static void init();
