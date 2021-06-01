@@ -3,59 +3,54 @@
 
 #include <map>
 
-#include <GLFW/glfw3.h>
 #include <glad/glad.h>
 #include <spdlog/spdlog.h>
 
-std::map<GLFWwindow *, entt::dispatcher> input_dispatches;
-
-void on_resize_event(GLFWwindow *window, int width, int height) {
-  auto &dispatcher = input_dispatches.at(window);
-  dispatcher.trigger<ResizeEvent>(width, height);
-}
-
-void on_key_event(
-    GLFWwindow *window, int key, int scancode, int action, int mods) {
-  auto &dispatcher = input_dispatches.at(window);
-  dispatcher.trigger<KeyEvent>(Key(key), KeyState(action), mods);
-}
-
-void on_mouse_move_event(GLFWwindow *window, double xpos, double ypos) {
-  auto &dispatcher = input_dispatches.at(window);
-  dispatcher.trigger<MouseMoveEvent>(xpos, ypos);
-}
-
-void on_mouse_button_event(
-    GLFWwindow *window, int button, int action, int mods) {
-  auto &dispatcher = input_dispatches.at(window);
-  double xpos, ypos;
-  glfwGetCursorPos(window, &xpos, &ypos);
-  dispatcher.trigger<MouseButtonEvent>(
-      MouseButton(button), MouseButtonState(action), mods, xpos, ypos);
-}
-
-void on_scroll_event(GLFWwindow *window, double xoffset, double yoffset) {
-  auto &dispatcher = input_dispatches.at(window);
-  double xpos, ypos;
-  glfwGetCursorPos(window, &xpos, &ypos);
-  if (xoffset != 0) {
-    dispatcher.trigger<ScrollEvent>(ScrollEvent::Axis::X, xoffset, xpos, ypos);
-  }
-  if (yoffset != 0) {
-    dispatcher.trigger<ScrollEvent>(ScrollEvent::Axis::Y, yoffset, xpos, ypos);
-  }
-}
+std::map<GLFWwindow *, entt::dispatcher &> dispatchers;
 
 void on_glfw_error(int error_code, const char *description) {
   spdlog::error("GLFW #{}: {}", error_code, description);
 }
 
-void Window::poll_events() { glfwPollEvents(); };
+void on_resize_event(GLFWwindow *window, int width, int height) {
+  auto &dispatcher = dispatchers.at(window);
+  dispatcher.enqueue<ResizeEvent>(width, height);
+}
 
-void Window::wait_events() { glfwWaitEvents(); };
+void on_key_event(
+    GLFWwindow *window, int key, int scancode, int action, int mods) {
+  auto &dispatcher = dispatchers.at(window);
+  dispatcher.enqueue<KeyEvent>(Key(key), KeyState(action), mods);
+}
 
-Window::Window(int width, int height, std::string title) {
-  if (input_dispatches.empty()) {
+void on_mouse_move_event(GLFWwindow *window, double xpos, double ypos) {
+  auto &dispatcher = dispatchers.at(window);
+  dispatcher.enqueue<MouseMoveEvent>(xpos, ypos);
+}
+
+void on_mouse_button_event(
+    GLFWwindow *window, int button, int action, int mods) {
+  auto &dispatcher = dispatchers.at(window);
+  double xpos, ypos;
+  glfwGetCursorPos(window, &xpos, &ypos);
+  dispatcher.enqueue<MouseButtonEvent>(
+      MouseButton(button), MouseButtonState(action), mods, xpos, ypos);
+}
+
+void on_scroll_event(GLFWwindow *window, double xoffset, double yoffset) {
+  auto &dispatcher = dispatchers.at(window);
+  double xpos, ypos;
+  glfwGetCursorPos(window, &xpos, &ypos);
+  if (xoffset != 0) {
+    dispatcher.enqueue<ScrollEvent>(ScrollEvent::Axis::X, xoffset, xpos, ypos);
+  }
+  if (yoffset != 0) {
+    dispatcher.enqueue<ScrollEvent>(ScrollEvent::Axis::Y, yoffset, xpos, ypos);
+  }
+}
+
+Window::Window(int width, int height, const std::string &title) {
+  if (dispatchers.empty()) {
     glfwSetErrorCallback(on_glfw_error);
     if (!glfwInit()) {
       spdlog::error("Failed to init GLFW");
@@ -83,7 +78,8 @@ Window::Window(int width, int height, std::string title) {
     exit(EXIT_FAILURE);
   }
 
-  input_dispatches.try_emplace(_handle);
+  dispatchers.emplace(_handle, dispatcher);
+  dispatcher.enqueue<ResizeEvent>(width, height);
 
   glfwSetFramebufferSizeCallback(_handle, on_resize_event);
   glfwSetKeyCallback(_handle, on_key_event);
@@ -95,11 +91,9 @@ Window::Window(int width, int height, std::string title) {
 Window::~Window() {
   glfwDestroyWindow(_handle);
 
-  if (_handle) {
-    input_dispatches.erase(_handle);
-    if (input_dispatches.empty()) {
-      glfwTerminate();
-    }
+  dispatchers.erase(_handle);
+  if (dispatchers.empty()) {
+    glfwTerminate();
   }
 }
 
@@ -115,6 +109,21 @@ bool Window::is_key_pressed(Key key) {
   return glfwGetKey(_handle, static_cast<int>(key));
 }
 
-entt::dispatcher &Window::input_dispatcher() {
-  return input_dispatches.at(_handle);
+bool Window::is_mouse_button_pressed(MouseButton button) {
+  return glfwGetMouseButton(_handle, static_cast<int>(button));
+}
+
+Vec2f Window::get_mouse_position() {
+  double xpos, ypos;
+  glfwGetCursorPos(_handle, &xpos, &ypos);
+  return {xpos, ypos};
+}
+
+void Window::set_mouse_position(const Vec2f &position) {
+  glfwSetCursorPos(_handle, position.x, position.y);
+}
+
+void Window::poll_events() {
+  glfwPollEvents();
+  dispatcher.update();
 }

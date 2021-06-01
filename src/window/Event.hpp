@@ -2,6 +2,13 @@
 
 #include <GLFW/glfw3.h>
 
+/* window event */
+struct ResizeEvent {
+  unsigned int width;
+  unsigned int height;
+};
+
+/* keyboard event */
 enum class Key {
   Unknown = GLFW_KEY_UNKNOWN,
   Space = GLFW_KEY_SPACE,
@@ -146,11 +153,7 @@ struct KeyEvent {
   bool num_lock() const { return mod | GLFW_MOD_NUM_LOCK; }
 };
 
-struct ResizeEvent {
-  unsigned int width;
-  unsigned int height;
-};
-
+/* mouse event */
 struct MouseMoveEvent {
   double x;
   double y;

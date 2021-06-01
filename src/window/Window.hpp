@@ -4,14 +4,12 @@
 
 #include <entt/entt.hpp>
 
-#include "KeyEvent.hpp"
+#include "../util/base.hpp"
+#include "Event.hpp"
 
 class Window {
 public:
-  static void poll_events();
-  static void wait_events();
-
-  Window(int width, int height, std::string title);
+  Window(int width, int height, const std::string &title);
   ~Window();
 
   Window(const Window &other) = delete;
@@ -30,7 +28,14 @@ public:
 
   bool is_key_pressed(Key key);
 
-  entt::dispatcher &input_dispatcher();
+  bool is_mouse_button_pressed(MouseButton button);
+
+  Vec2f get_mouse_position();
+  void set_mouse_position(const Vec2f &position);
+
+  void poll_events();
+
+  entt::dispatcher dispatcher;
 
 private:
   static void init();

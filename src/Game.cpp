@@ -2,7 +2,6 @@
 
 #include <glm/glm.hpp>
 
-#include "KeyEvent.hpp"
 #include "components/Launchable.hpp"
 #include "components/Livetime.hpp"
 #include "components/Moveable.hpp"
@@ -28,15 +27,13 @@ Game::Game()
           _resource_manager.program_cache(),
           _resource_manager.texture_cache(),
           _resource_manager.sprite_frame_cache()) {
-  _renderer.camera().set_screen_size(_width, _height);
-  _renderer.camera().set_size(0.5f * _width, 0.5f * _height);
-
   run_spell(0);
 
-  auto &dispatcher = _window.input_dispatcher();
+  auto &dispatcher = _window.dispatcher;
   dispatcher.sink<ResizeEvent>().connect<&Game::on_resize_event>(this);
   dispatcher.sink<KeyEvent>().connect<&Game::on_key_event>(this);
   dispatcher.sink<ScrollEvent>().connect<&Game::on_scroll_event>(this);
+  _window.poll_events();
 }
 
 void Game::on_resize_event(const ResizeEvent &e) {
@@ -71,7 +68,7 @@ void Game::loop() {
     Ui::get_instance().append_system_time("All", frame_timer.elapsed());
     frame_timer.restart();
 
-    Window::poll_events();
+    _window.poll_events();
     process_input();
 
     livetime_system.update();

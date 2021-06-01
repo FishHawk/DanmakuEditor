@@ -3,9 +3,9 @@
 #include <entt/entt.hpp>
 
 #include "SpellManager.hpp"
-#include "Window.hpp"
 #include "graphic/Renderer.hpp"
 #include "resources/ResourceManager.hpp"
+#include "window/Window.hpp"
 
 class Game {
 public:
@@ -16,19 +16,8 @@ public:
 
   void loop();
 
-  static void
-  framebuffer_size_callback(GLFWwindow *window, int width, int height);
-  static void mouse_callback(GLFWwindow *window, double xpos, double ypos);
-  static void
-  scroll_callback(GLFWwindow *window, double xoffset, double yoffset);
-  static void
-  key_callback(GLFWwindow *window, int key, int scancode, int action, int mods);
-
   void run_spell(size_t index);
   const auto &spell_manager() { return _spell_manager; }
-
-  auto &camera() { return _renderer.camera(); }
-  auto &window() { return _window; }
 
 private:
   Game();
@@ -45,10 +34,8 @@ private:
   void on_key_event(const KeyEvent &e);
   void on_scroll_event(const ScrollEvent &e);
 
-  const int _width = 600, _height = 800;
-  Window _window{_width, _height, "Danmaku Editor"};
+  Window _window{600, 800, "Danmaku Editor"};
 
-  GLboolean _keys[1024];
   entt::registry _registry;
 
   ResourceManager _resource_manager;

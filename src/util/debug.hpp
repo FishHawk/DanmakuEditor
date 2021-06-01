@@ -1,7 +1,5 @@
 #include <fmt/core.h>
 
-namespace util {
-
 template <typename S, typename... Args>
 inline void print(const S &format_str, Args &&...args) {
   fmt::print(format_str, args...);
@@ -12,5 +10,3 @@ inline void println(const S &format_str, Args &&...args) {
   fmt::print(format_str, args...);
   std::putc('\n', stdout);
 }
-
-} // namespace util

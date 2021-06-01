@@ -17,10 +17,10 @@ target_sources(danmaku-editor
     resources/ProgramLoader.cpp
     resources/TextureLoader.cpp
     ui/Ui.cpp
+    window/Window.cpp
     Game.cpp
     main.cpp
     SpellManager.cpp
-    Window.cpp
 )
 
 target_include_directories(danmaku-editor
