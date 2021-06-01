@@ -92,7 +92,7 @@ void Game::loop() {
     Ui::get_instance().append_system_time("All", frame_timer.elapsed());
     frame_timer.restart();
 
-    _window.poll_events();
+    Window::poll_events();
     process_input();
 
     livetime_system.update();

@@ -4,18 +4,25 @@
 
 #include <string>
 
-#include <GLFW/glfw3.h>
-#include <glad/glad.h>
-#include <imgui.h>
-#include <implot.h>
-
 #include "KeyEvent.hpp"
 
 class Window {
 public:
-  Window(int width, int height, std::string title);
+  static void poll_events();
+  static void wait_events();
 
+  Window(int width, int height, std::string title);
   ~Window();
+
+  Window(const Window &other) = delete;
+  Window &operator=(const Window &) = delete;
+
+  Window(Window &&other);
+  Window &operator=(Window &&) = delete;
+
+  operator GLFWwindow *() { return _handle; }
+
+  void make_context_current();
 
   bool should_close() const;
 
@@ -23,12 +30,11 @@ public:
 
   void display();
 
-  void poll_events();
-
   bool is_key_pressed(Key key);
 
 private:
-  GLFWwindow *_window;
-  int _width, _height;
-  std::string _title;
+  static void init();
+  static void terminate();
+
+  GLFWwindow *_handle;
 };
