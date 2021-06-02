@@ -4,7 +4,6 @@
 
 #include "SpellManager.hpp"
 #include "graphic/Renderer.hpp"
-#include "resources/ResourceManager.hpp"
 #include "window/Window.hpp"
 
 class Game {
@@ -31,11 +30,9 @@ private:
   void render_ui();
 
   Window _window{600, 800, "Danmaku Editor"};
+  Renderer _renderer;
 
   entt::registry _registry;
 
-  ResourceManager _resource_manager;
   SpellManager _spell_manager;
-
-  Renderer _renderer;
 };

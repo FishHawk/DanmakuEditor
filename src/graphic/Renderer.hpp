@@ -1,5 +1,7 @@
 #pragma once
 
+#include <filesystem>
+
 #include <entt/entt.hpp>
 #include <glad/glad.h>
 
@@ -17,10 +19,7 @@ struct Vertex {
 
 class Renderer {
 public:
-  Renderer(
-      const entt::resource_cache<Program> &program_cache,
-      const entt::resource_cache<Texture> &texture_cache,
-      const entt::resource_cache<SpriteFrame> &sprite_frame_cache);
+  Renderer();
   ~Renderer();
 
   void push_sprite(Sprite sprite);
@@ -28,6 +27,8 @@ public:
   void render();
 
   Camera &camera() { return _camera; }
+
+  void load_resource(std::filesystem::path dir);
 
 private:
   GLuint _VBO;
@@ -37,7 +38,7 @@ private:
 
   Camera _camera;
 
-  const entt::resource_cache<Program> &_program_cache;
-  const entt::resource_cache<Texture> &_texture_cache;
-  const entt::resource_cache<SpriteFrame> &_sprite_frame_cache;
+  entt::resource_cache<Program> _program_cache;
+  entt::resource_cache<Texture> _texture_cache;
+  entt::resource_cache<SpriteFrame> _sprite_frame_cache;
 };

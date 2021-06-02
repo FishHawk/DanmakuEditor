@@ -15,8 +15,7 @@ std::default_random_engine generator;
 std::uniform_real_distribution<Distance> distribution(-1, 1);
 auto unifom = std::bind(distribution, generator);
 
-SpellManager::SpellManager(const ResourceManager &resource_manager)
-    : _resource_manager(resource_manager) {
+SpellManager::SpellManager() {
   const auto spell1 = Launchable{
       "aircraft"_hs,
       -1,

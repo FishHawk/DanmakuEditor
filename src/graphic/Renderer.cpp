@@ -1,16 +1,14 @@
 #include "Renderer.hpp"
 
-#include "../util/debug.hpp"
 #include <glm/gtc/matrix_transform.hpp>
+
+#include "ProgramLoader.hpp"
+#include "SpriteFrameLoader.hpp"
+#include "TextureLoader.hpp"
 
 using namespace entt::literals;
 
-Renderer::Renderer(
-    const entt::resource_cache<Program> &program_cache,
-    const entt::resource_cache<Texture> &texture_cache,
-    const entt::resource_cache<SpriteFrame> &sprite_frame_cache)
-    : _program_cache(program_cache), _texture_cache(texture_cache),
-      _sprite_frame_cache(sprite_frame_cache) {
+Renderer::Renderer() {
   glGenBuffers(1, &_VBO);
   glBindBuffer(GL_ARRAY_BUFFER, _VBO);
 
@@ -64,6 +62,30 @@ void Renderer::push_sprite(Sprite sprite) {
   g.emplace_back(p_bl, t_bl, color); // bottom left
   g.emplace_back(p_tl, t_tl, color); // top right
   g.emplace_back(p_tr, t_tr, color); // top right
+}
+
+void Renderer::load_resource(std::filesystem::path dir) {
+  const auto program_dir = dir / "shader";
+  const auto texture_dir = dir / "texture";
+
+  _program_cache.load<ProgramLoader>(
+      "base"_hs, program_dir / "base.vs", program_dir / "base.fs");
+
+  {
+    auto texture = _texture_cache.load<TextureLoader>(
+        "circle"_hs, texture_dir / "circle.png", true);
+    _sprite_frame_cache.load<SpriteFrameLoader>(
+        "aircraft"_hs, "circle"_hs, texture);
+    _sprite_frame_cache.load<SpriteFrameLoader>(
+        "cannon"_hs, "circle"_hs, texture, Size{16, 16});
+  }
+
+  {
+    auto texture = _texture_cache.load<TextureLoader>(
+        "bullet"_hs, texture_dir / "bullet.png", true);
+    _sprite_frame_cache.load<SpriteFrameLoader>(
+        "bullet"_hs, "bullet"_hs, texture);
+  }
 }
 
 void Renderer::render() {

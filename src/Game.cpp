@@ -8,8 +8,6 @@
 #include "generators/DirectionGenerator.hpp"
 #include "generators/ModifierGenerator.hpp"
 #include "generators/OriginGenerator.hpp"
-#include "resources/ProgramLoader.hpp"
-#include "resources/TextureLoader.hpp"
 #include "systems/LaunchSystem.hpp"
 #include "systems/LivetimeSystem.hpp"
 #include "systems/MoveSystem.hpp"
@@ -20,13 +18,9 @@
 
 using namespace entt::literals;
 
-Game::Game()
-    : _resource_manager("/home/wh/Projects/DanmakuEditor/assets/"),
-      _spell_manager(_resource_manager),
-      _renderer(
-          _resource_manager.program_cache(),
-          _resource_manager.texture_cache(),
-          _resource_manager.sprite_frame_cache()) {
+Game::Game() {
+
+  _renderer.load_resource("/home/wh/Projects/DanmakuEditor/assets/");
 
   _window.add_listener(new entt::listener{
       [this](const ResizeEvent &e) {

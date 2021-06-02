@@ -11,11 +11,10 @@ target_sources(danmaku-editor
     systems/MoveSystem.cpp
     systems/RenderSystem.cpp
     graphic/Program.cpp
+    graphic/ProgramLoader.cpp
     graphic/Renderer.cpp
     graphic/Texture.cpp
-    resources/ResourceManager.cpp
-    resources/ProgramLoader.cpp
-    resources/TextureLoader.cpp
+    graphic/TextureLoader.cpp
     ui/Ui.cpp
     window/Window.cpp
     Game.cpp
