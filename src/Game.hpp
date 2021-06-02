@@ -30,10 +30,6 @@ private:
       const std::string &name, std::function<void(void)> callback);
   void render_ui();
 
-  void on_event(const ResizeEvent &e);
-  void on_event(const KeyEvent &e);
-  void on_event(const ScrollEvent &e);
-
   Window _window{600, 800, "Danmaku Editor"};
 
   entt::registry _registry;

@@ -27,60 +27,28 @@ Game::Game()
           _resource_manager.program_cache(),
           _resource_manager.texture_cache(),
           _resource_manager.sprite_frame_cache()) {
+
+  _window.add_listener(new entt::listener{
+      [this](const ResizeEvent &e) {
+        auto &camera = _renderer.camera();
+        camera.set_screen_size(e.width, e.height);
+        camera.set_size(0.5f * e.width, 0.5f * e.height);
+      },
+      [this](const KeyEvent &e) {
+        if (e.key == Key::Escape && e.state == KeyState::Press) {
+          _window.close();
+        } else if (e.key == Key::F1 && e.state == KeyState::Press) {
+          Ui::get_instance().toggle_console_window();
+        }
+      },
+      [this](const ScrollEvent &e) {
+        if (e.axis == ScrollEvent::Axis::Y) {
+          auto &camera = _renderer.camera();
+          camera.zoom(1 + e.offset * 0.12);
+        }
+      }});
+
   run_spell(0);
-
-  auto &dispatcher = _window.dispatcher;
-
-  auto add_listener = [&, this]<typename T>() {
-    using Ptr = void (Game::*)(const T &);
-    constexpr auto ptr = static_cast<Ptr>(&Game::on_event);
-    dispatcher.sink<T>().template connect<ptr, Game *>(this);
-  };
-  add_listener.operator()<ResizeEvent>();
-  add_listener.operator()<KeyEvent>();
-  add_listener.operator()<ScrollEvent>();
-
-  // constexpr auto ptr = []<typename T>() {
-  //   return static_cast<void (Game::*)(const T &)>(&Game::on_event);
-  // };
-  // dispatcher.sink<ResizeEvent>().connect<ptr.operator()<ResizeEvent>()>(this);
-  // dispatcher.sink<KeyEvent>().connect<ptr.operator()<KeyEvent>()>(this);
-  // dispatcher.sink<ScrollEvent>().connect<ptr.operator()<ScrollEvent>()>(this);
-
-  // dispatcher.sink<ResizeEvent>()
-  //     .connect<static_cast<void (Game::*)(const ResizeEvent &)>(
-  //         &Game::on_event)>(this);
-
-  // dispatcher.sink<KeyEvent>()
-  //     .connect<static_cast<void (Game::*)(const KeyEvent
-  //     &)>(&Game::on_event)>(
-  //         this);
-
-  // dispatcher.sink<ScrollEvent>()
-  //     .connect<static_cast<void (Game::*)(const ScrollEvent &)>(
-  //         &Game::on_event)>(this);
-
-  _window.poll_events();
-}
-
-void Game::on_event(const ResizeEvent &e) {
-  auto &camera = _renderer.camera();
-  camera.set_screen_size(e.width, e.height);
-  camera.set_size(0.5f * e.width, 0.5f * e.height);
-}
-
-void Game::on_event(const KeyEvent &e) {
-  if (e.key == Key::Escape && e.state == KeyState::Press)
-    _window.close();
-  if (e.key == Key::F1 && e.state == KeyState::Press)
-    Ui::get_instance().toggle_console_window();
-}
-
-void Game::on_event(const ScrollEvent &e) {
-  if (e.axis == ScrollEvent::Axis::Y) {
-    auto &camera = _renderer.camera();
-    camera.zoom(1 + e.offset * 0.12);
-  }
 }
 
 void Game::loop() {

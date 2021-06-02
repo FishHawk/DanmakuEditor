@@ -78,8 +78,8 @@ Window::Window(int width, int height, const std::string &title) {
     exit(EXIT_FAILURE);
   }
 
-  dispatchers.emplace(_handle, dispatcher);
-  dispatcher.enqueue<ResizeEvent>(width, height);
+  dispatchers.emplace(_handle, _dispatcher);
+  _dispatcher.enqueue<ResizeEvent>(width, height);
 
   glfwSetFramebufferSizeCallback(_handle, on_resize_event);
   glfwSetKeyCallback(_handle, on_key_event);
@@ -125,5 +125,5 @@ void Window::set_mouse_position(const Vec2f &position) {
 
 void Window::poll_events() {
   glfwPollEvents();
-  dispatcher.update();
+  _dispatcher.update();
 }
