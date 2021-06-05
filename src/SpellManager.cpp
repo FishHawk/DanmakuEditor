@@ -20,8 +20,8 @@ SpellManager::SpellManager() {
       -1,
       repetition::at_start(),
       origin::at(Position{0, 0}),
-      nullptr,
-      nullptr,
+      direction::at(),
+      {},
       []() {
         return Launchable{
             "cannon"_hs,
@@ -29,13 +29,11 @@ SpellManager::SpellManager() {
             repetition::at_start(128),
             origin::follow(),
             direction::circle(0, glm::radians(360.f), 128),
-            [](auto d) {
-              return Movement{false, [](auto d, auto t) {
-                                double r = 32 + 16 * sin(0.1 * t);
-                                double phi = 0.01 * t + d;
-                                return Position{r * cos(phi), r * sin(phi)};
-                              }};
-            },
+            {{.is_additional = false, .descriptor = [](auto d, auto t) {
+                    double r = 32 + 16 * sin(0.1 * t);
+                    double phi = 0.01 * t + d;
+                    return Position{r * cos(phi), r * sin(phi)};
+                  }}},
             []() {
               return Launchable{
                   "bullet"_hs,
@@ -43,11 +41,9 @@ SpellManager::SpellManager() {
                   repetition::every_n(1),
                   origin::at(),
                   direction::at(),
-                  [](auto d) {
-                    return Movement{true, [](auto d, auto t) {
-                                      return Position{cos(d), sin(d)};
-                                    }};
-                  }};
+                  {{.is_additional = true, .descriptor = [](auto d, auto t) {
+                      return Position{cos(d), sin(d)};
+                    }}}};
             }};
       }};
 

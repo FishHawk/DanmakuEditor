@@ -15,6 +15,6 @@ struct Launchable {
   RepetitionGenerator repetition_generator;
   OriginGenerator origin_generator;
   DirectionGenerator direction_generator;
-  MovementGenerator modifier_generator;
+  std::vector<Movement> template_movements;
   LaunchableGenerator launchable_generator = nullptr;
 };

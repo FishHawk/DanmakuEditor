@@ -25,14 +25,13 @@ void LaunchSystem::update() {
 
       auto origin = launchable_copy.origin_generator(
           parent, moveable.position, cycle.time, i);
-      if (launchable_copy.modifier_generator != nullptr) {
-        auto direction = launchable_copy.direction_generator(
-            atan2(moveable.offset.y, moveable.offset.x), cycle.time, i);
-        auto movement = launchable_copy.modifier_generator(direction);
-        _registry.emplace<Moveable>(child, origin, direction, 0, movement);
-      } else {
-        _registry.emplace<Moveable>(child, origin);
-      }
+      auto direction = launchable_copy.direction_generator(
+          atan2(moveable.offset.y, moveable.offset.x), cycle.time, i);
+      auto new_moveable = Moveable{
+          .origin = origin,
+          .direction = direction,
+          .movements = launchable_copy.template_movements};
+      _registry.emplace<Moveable>(child, new_moveable);
 
       if (launchable_copy.launchable_generator != nullptr) {
         auto launchable = launchable_copy.launchable_generator();

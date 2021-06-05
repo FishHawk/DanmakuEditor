@@ -31,7 +31,9 @@ void MoveSystem::update() {
         },
         moveable.origin);
 
-    update_moveable_offset(moveable, moveable.movement);
+    if (!moveable.movements.empty()) {
+      update_moveable_offset(moveable, moveable.movements.front());
+    }
 
     moveable.livetime++;
     moveable.position_buf = origin + moveable.offset;
