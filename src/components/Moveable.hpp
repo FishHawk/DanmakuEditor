@@ -11,8 +11,7 @@ using Position = Vec2<Distance>;
 using Entity = entt::registry::entity_type;
 
 struct Movement {
-  enum Mode { ByPosition, ByVelocity };
-  Mode mode;
+  bool is_additional;
   std::function<Position(Direction, Time)> descriptor;
 };
 
@@ -22,8 +21,9 @@ struct Moveable {
 
   Origin origin;
   Direction direction{0};
-  Time elapsed_time{0};
+  Time livetime{0};
   Movement movement{};
   Position offset{0.f, 0.f};
   Position position{0.f, 0.f};
+  Position position_buf{0.f, 0.f};
 };
