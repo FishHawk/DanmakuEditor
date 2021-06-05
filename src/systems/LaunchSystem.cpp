@@ -28,8 +28,8 @@ void LaunchSystem::update() {
       if (launchable_copy.modifier_generator != nullptr) {
         auto direction = launchable_copy.direction_generator(
             atan2(moveable.offset.y, moveable.offset.x), cycle.time, i);
-        auto modifier = launchable_copy.modifier_generator(direction);
-        _registry.emplace<Moveable>(child, origin, modifier);
+        auto movement = launchable_copy.modifier_generator(direction);
+        _registry.emplace<Moveable>(child, origin, direction, 0, movement);
       } else {
         _registry.emplace<Moveable>(child, origin);
       }

@@ -3,7 +3,6 @@ add_executable(danmaku-editor)
 target_sources(danmaku-editor
   PRIVATE
     generators/DirectionGenerator.cpp
-    generators/ModifierGenerator.cpp
     generators/OriginGenerator.cpp
     generators/RepetitionGenerator.cpp
     systems/LaunchSystem.cpp

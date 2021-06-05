@@ -24,9 +24,17 @@ void MoveSystem::update() {
             }
           },
           moveable.origin);
-      if (moveable.modifier != nullptr) {
-        moveable.offset = moveable.modifier(moveable.offset, cycle.time);
+
+      auto &movement = moveable.movement;
+      if (movement.descriptor != nullptr) {
+        auto vec2 = movement.descriptor(moveable.direction, cycle.time);
+        if (movement.mode == Movement::Mode::ByPosition) {
+          moveable.offset = vec2;
+        } else if (movement.mode == Movement::Mode::ByVelocity) {
+          moveable.offset += vec2;
+        }
       }
+
       moveable.position = origin + moveable.offset;
     }
   }

@@ -6,7 +6,6 @@
 #include "components/Livetime.hpp"
 #include "components/Moveable.hpp"
 #include "generators/DirectionGenerator.hpp"
-#include "generators/ModifierGenerator.hpp"
 #include "generators/OriginGenerator.hpp"
 #include "systems/LaunchSystem.hpp"
 #include "systems/LivetimeSystem.hpp"

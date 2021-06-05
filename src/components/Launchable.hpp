@@ -7,7 +7,7 @@ struct Launchable {
   using OriginGenerator =
       std::function<Moveable::Origin(Entity, Position, Time, size_t)>;
   using DirectionGenerator = std::function<Direction(Direction, Time, size_t)>;
-  using ModifierGenerator = std::function<Moveable::Modifier(Direction)>;
+  using MovementGenerator = std::function<Movement(Direction)>;
   using LaunchableGenerator = std::function<Launchable()>;
 
   entt::id_type sprite_frame;
@@ -15,6 +15,6 @@ struct Launchable {
   RepetitionGenerator repetition_generator;
   OriginGenerator origin_generator;
   DirectionGenerator direction_generator;
-  ModifierGenerator modifier_generator;
+  MovementGenerator modifier_generator;
   LaunchableGenerator launchable_generator = nullptr;
 };
