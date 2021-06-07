@@ -105,6 +105,53 @@ void Window::close() { glfwSetWindowShouldClose(_handle, true); }
 
 void Window::display() { glfwSwapBuffers(_handle); }
 
+void Window::set_title(const std::string &title) {
+  glfwSetWindowTitle(_handle, title.c_str());
+}
+
+Vec2i Window::position() const {
+  int x, y;
+  glfwGetWindowPos(_handle, &x, &y);
+  return {x, y};
+}
+
+void Window::set_position(const Vec2i &position) {
+  glfwSetWindowPos(_handle, position.x, position.y);
+}
+
+Vec2i Window::size() const {
+  int w, h;
+  glfwGetWindowSize(_handle, &w, &h);
+  return {w, h};
+}
+
+void Window::set_size(const Vec2i &size) {
+  glfwSetWindowSize(_handle, size.x, size.y);
+}
+
+void Window::iconify() { glfwIconifyWindow(_handle); }
+void Window::restore() { glfwRestoreWindow(_handle); }
+void Window::maximize() { glfwMaximizeWindow(_handle); }
+
+void Window::show() { glfwShowWindow(_handle); }
+void Window::hide() { glfwHideWindow(_handle); }
+void Window::focus() { glfwFocusWindow(_handle); }
+
+void Window::poll_events() {
+  glfwPollEvents();
+  _dispatcher.update();
+}
+
+void Window::wait_events() {
+  glfwWaitEvents();
+  _dispatcher.update();
+}
+
+void Window::wait_events(double timeout) {
+  glfwWaitEventsTimeout(timeout);
+  _dispatcher.update();
+}
+
 bool Window::is_key_pressed(Key key) {
   return glfwGetKey(_handle, static_cast<int>(key));
 }
@@ -121,9 +168,4 @@ Vec2f Window::get_mouse_position() {
 
 void Window::set_mouse_position(const Vec2f &position) {
   glfwSetCursorPos(_handle, position.x, position.y);
-}
-
-void Window::poll_events() {
-  glfwPollEvents();
-  _dispatcher.update();
 }

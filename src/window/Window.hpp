@@ -8,6 +8,8 @@
 #include "Event.hpp"
 #include "Listener.hpp"
 
+using WindowHandle = GLFWwindow *;
+
 class Window {
 public:
   Window(int width, int height, const std::string &title);
@@ -27,6 +29,26 @@ public:
 
   void display();
 
+  void set_title(const std::string &title);
+
+  Vec2i position() const;
+  void set_position(const Vec2i &position);
+
+  Vec2i size() const;
+  void set_size(const Vec2i &size);
+
+  void iconify();
+  void restore();
+  void maximize();
+
+  void show();
+  void hide();
+  void focus();
+
+  void poll_events();
+  void wait_events();
+  void wait_events(double timeout);
+
   bool is_key_pressed(Key key);
 
   bool is_mouse_button_pressed(MouseButton button);
@@ -34,17 +56,15 @@ public:
   Vec2f get_mouse_position();
   void set_mouse_position(const Vec2f &position);
 
-  void poll_events();
-
   template <typename Event, typename Listener>
-  requires entt::Listenable<Event, Listener>
-  void add_listener(Listener *listener) {
+  requires entt::Listenable<Event, Listener> void
+  add_listener(Listener *listener) {
     entt::add_listener<Event>(_dispatcher, listener);
   }
 
   template <typename Event, typename Listener>
-  requires entt::Listenable<Event, Listener>
-  void remove_listener(Listener *listener) {
+  requires entt::Listenable<Event, Listener> void
+  remove_listener(Listener *listener) {
     entt::remove_listener<Event>(_dispatcher, listener);
   }
 
@@ -73,5 +93,5 @@ private:
 
   entt::dispatcher _dispatcher;
 
-  GLFWwindow *_handle;
+  WindowHandle _handle;
 };

@@ -1,6 +1,3 @@
 BasedOnStyle: LLVM
 Language: Cpp
-AlwaysBreakTemplateDeclarations: Yes
-AlignAfterOpenBracket: AlwaysBreak
-BinPackArguments: false
-BinPackParameters: false
+ColumnLimit: 0
