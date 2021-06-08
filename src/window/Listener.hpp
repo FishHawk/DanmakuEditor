@@ -18,7 +18,9 @@ template <typename... Ts>
 struct listener : Ts... {
   template <typename T>
   requires Callable<T, listener<Ts...>>
-  auto on_event(T &&args) { return operator()(std::forward<T>(args)); }
+  auto on_event(T &&args) {
+    return this->operator()(std::forward<T>(args));
+  }
 
 private:
   using Ts::operator()...;
