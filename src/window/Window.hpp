@@ -8,24 +8,14 @@
 #include "Event.hpp"
 #include "Listener.hpp"
 
-using WindowHandle = GLFWwindow *;
-
 class Window {
 public:
   Window(int width, int height, const std::string &title);
-  ~Window();
-
-  Window(const Window &other) = delete;
-  Window &operator=(const Window &) = delete;
-
-  Window(Window &&other) = delete;
-  Window &operator=(Window &&) = delete;
 
   void make_context_current();
 
-  bool should_close() const;
-
-  void close();
+  bool should_close();
+  void set_should_close();
 
   void display();
 
@@ -57,15 +47,15 @@ public:
   void set_mouse_position(const Vec2f &position);
 
   template <typename Event, typename Listener>
-  requires entt::Listenable<Event, Listener> void
-  add_listener(Listener *listener) {
-    entt::add_listener<Event>(_dispatcher, listener);
+  requires entt::Listenable<Event, Listener>
+  void add_listener(Listener *listener) {
+    entt::add_listener<Event>(*_dispatcher, listener);
   }
 
   template <typename Event, typename Listener>
-  requires entt::Listenable<Event, Listener> void
-  remove_listener(Listener *listener) {
-    entt::remove_listener<Event>(_dispatcher, listener);
+  requires entt::Listenable<Event, Listener>
+  void remove_listener(Listener *listener) {
+    entt::remove_listener<Event>(*_dispatcher, listener);
   }
 
   template <typename Listener>
@@ -91,7 +81,6 @@ private:
   template <typename Event, typename Listener>
   void remove_listener(Listener *listener) {}
 
-  entt::dispatcher _dispatcher;
-
-  WindowHandle _handle;
+  entt::dispatcher *_dispatcher;
+  std::shared_ptr<GLFWwindow> _handle;
 };

@@ -29,7 +29,7 @@ Game::Game() {
       },
       [this](const KeyEvent &e) {
         if (e.key == Key::Escape && e.state == KeyState::Press) {
-          _window.close();
+          _window.set_should_close();
         } else if (e.key == Key::F1 && e.state == KeyState::Press) {
           Ui::get_instance().toggle_console_window();
         }
