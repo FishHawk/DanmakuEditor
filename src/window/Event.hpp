@@ -1,11 +1,43 @@
 #pragma once
 
+#include <string>
+#include <vector>
+
 #include <GLFW/glfw3.h>
 
 /* window event */
-struct ResizeEvent {
-  unsigned int width;
-  unsigned int height;
+struct WindowPositionEvent {
+  int x, y;
+};
+
+struct WindowSizeEvent {
+  int width, height;
+};
+
+struct WindowCloseEvent {
+};
+
+struct WindowRefreshEvent {
+};
+
+struct WindowFocusEvent {
+  bool focus;
+};
+
+struct WindowIconifyEvent {
+  bool iconified;
+};
+
+struct WindowMaximizeEvent {
+  bool maximized;
+};
+
+struct WindowFramebufferSizeEvent {
+  int width, height;
+};
+
+struct WindowContentScaleEvent {
+  float xscale, yscale;
 };
 
 /* keyboard event */
@@ -153,12 +185,12 @@ struct KeyEvent {
   bool num_lock() const { return mod | GLFW_MOD_NUM_LOCK; }
 };
 
-/* mouse event */
-struct MouseMoveEvent {
-  double x;
-  double y;
+/* text event */
+struct TextEvent {
+  unsigned int codepoint;
 };
 
+/* mouse event */
 enum MouseButton {
   B1 = GLFW_MOUSE_BUTTON_1,
   B2 = GLFW_MOUSE_BUTTON_2,
@@ -174,14 +206,14 @@ enum MouseButton {
   MaxValue = GLFW_MOUSE_BUTTON_LAST
 };
 
-enum class MouseButtonState { Release = GLFW_RELEASE, Press = GLFW_PRESS };
+enum class MouseButtonState { Release = GLFW_RELEASE,
+                              Press = GLFW_PRESS };
 
 struct MouseButtonEvent {
   MouseButton button;
   MouseButtonState state;
   int mod;
-  double x;
-  double y;
+  double x, y;
 
   bool shift() const { return mod | GLFW_MOD_SHIFT; }
   bool control() const { return mod | GLFW_MOD_CONTROL; }
@@ -191,11 +223,24 @@ struct MouseButtonEvent {
   bool num_lock() const { return mod | GLFW_MOD_NUM_LOCK; }
 };
 
+struct CursorMoveEvent {
+  double x, y;
+};
+
+struct CursorEnterEvent {
+  bool entered;
+};
+
 struct ScrollEvent {
-  enum Axis { X, Y };
+  enum Axis { X,
+              Y };
 
   Axis axis;
   double offset;
-  double x;
-  double y;
+  double x, y;
+};
+
+/* other */
+struct DropEvent {
+  std::vector<std::string> paths;
 };

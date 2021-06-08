@@ -6,7 +6,6 @@
 #include "../components/Livetime.hpp"
 #include "../components/Moveable.hpp"
 #include "../components/Renderable.hpp"
-#include "../util/debug.hpp"
 
 void LaunchSystem::update() {
   auto view =

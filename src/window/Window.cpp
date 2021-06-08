@@ -12,41 +12,99 @@ void on_glfw_error(int error_code, const char *description) {
   spdlog::error("GLFW #{}: {}", error_code, description);
 }
 
-void on_resize_event(GLFWwindow *window, int width, int height) {
+void on_position_event(GLFWwindow *window, int x, int y) {
   auto dispatcher = dispatchers.at(window);
-  dispatcher->enqueue<ResizeEvent>(width, height);
+  dispatcher->enqueue<WindowPositionEvent>(x, y);
 }
 
-void on_key_event(
-    GLFWwindow *window, int key, int scancode, int action, int mods) {
+void on_size_event(GLFWwindow *window, int width, int height) {
+  auto dispatcher = dispatchers.at(window);
+  dispatcher->enqueue<WindowSizeEvent>(width, height);
+}
+
+void on_close_event(GLFWwindow *window) {
+  auto dispatcher = dispatchers.at(window);
+  dispatcher->enqueue<WindowCloseEvent>();
+}
+
+void on_refresh_event(GLFWwindow *window) {
+  auto dispatcher = dispatchers.at(window);
+  dispatcher->enqueue<WindowRefreshEvent>();
+}
+
+void on_focus_event(GLFWwindow *window, int focus) {
+  auto dispatcher = dispatchers.at(window);
+  dispatcher->enqueue<WindowFocusEvent>(focus);
+}
+
+void on_iconify_event(GLFWwindow *window, int iconified) {
+  auto dispatcher = dispatchers.at(window);
+  dispatcher->enqueue<WindowIconifyEvent>(iconified);
+}
+
+void on_maximize_event(GLFWwindow *window, int maximized) {
+  auto dispatcher = dispatchers.at(window);
+  dispatcher->enqueue<WindowMaximizeEvent>(maximized);
+}
+
+void on_framebuffer_size_event(GLFWwindow *window, int width, int height) {
+  auto dispatcher = dispatchers.at(window);
+  dispatcher->enqueue<WindowFramebufferSizeEvent>(width, height);
+}
+
+void on_content_scale_event(GLFWwindow *window, float xscale, float yscale) {
+  auto dispatcher = dispatchers.at(window);
+  dispatcher->enqueue<WindowContentScaleEvent>(xscale, yscale);
+}
+
+void on_key_event(GLFWwindow *window, int key, int scancode, int action, int mods) {
   auto dispatcher = dispatchers.at(window);
   dispatcher->enqueue<KeyEvent>(Key(key), KeyState(action), mods);
 }
 
-void on_mouse_move_event(GLFWwindow *window, double xpos, double ypos) {
+void on_text_event(GLFWwindow *window, unsigned int codepoint) {
   auto dispatcher = dispatchers.at(window);
-  dispatcher->enqueue<MouseMoveEvent>(xpos, ypos);
+  dispatcher->enqueue<TextEvent>(codepoint);
 }
 
-void on_mouse_button_event(
-    GLFWwindow *window, int button, int action, int mods) {
-  auto dispatcher = dispatchers.at(window);
+void on_mouse_button_event(GLFWwindow *window, int button, int action, int mods) {
   double xpos, ypos;
   glfwGetCursorPos(window, &xpos, &ypos);
+
+  auto dispatcher = dispatchers.at(window);
   dispatcher->enqueue<MouseButtonEvent>(
-      MouseButton(button), MouseButtonState(action), mods, xpos, ypos);
+      MouseButton(button),
+      MouseButtonState(action),
+      mods, xpos, ypos);
+}
+
+void on_cursor_move_event(GLFWwindow *window, double xpos, double ypos) {
+  auto dispatcher = dispatchers.at(window);
+  dispatcher->enqueue<CursorMoveEvent>(xpos, ypos);
+}
+
+void on_cursor_enter_event(GLFWwindow *window, int entered) {
+  auto dispatcher = dispatchers.at(window);
+  dispatcher->enqueue<CursorEnterEvent>(entered);
 }
 
 void on_scroll_event(GLFWwindow *window, double xoffset, double yoffset) {
-  auto dispatcher = dispatchers.at(window);
   double xpos, ypos;
   glfwGetCursorPos(window, &xpos, &ypos);
+
+  auto dispatcher = dispatchers.at(window);
   if (xoffset != 0) {
     dispatcher->enqueue<ScrollEvent>(ScrollEvent::Axis::X, xoffset, xpos, ypos);
   }
   if (yoffset != 0) {
     dispatcher->enqueue<ScrollEvent>(ScrollEvent::Axis::Y, yoffset, xpos, ypos);
   }
+}
+
+void on_drop_event(GLFWwindow *window, int count, const char **paths) {
+  std::vector<std::string> vec(paths, paths + count);
+  auto dispatcher = dispatchers.at(window);
+  dispatcher->enqueue<DropEvent>(vec);
 }
 
 Window::Window(int width, int height, const std::string &title) {
@@ -90,14 +148,27 @@ Window::Window(int width, int height, const std::string &title) {
   }
 
   _dispatcher = new entt::dispatcher;
-  _dispatcher->enqueue<ResizeEvent>(width, height);
+  _dispatcher->enqueue<WindowSizeEvent>(width, height);
+  _dispatcher->enqueue<WindowFramebufferSizeEvent>(width, height);
   dispatchers.emplace(_handle.get(), _dispatcher);
 
-  glfwSetFramebufferSizeCallback(_handle.get(), on_resize_event);
-  glfwSetKeyCallback(_handle.get(), on_key_event);
-  glfwSetCursorPosCallback(_handle.get(), on_mouse_move_event);
-  glfwSetMouseButtonCallback(_handle.get(), on_mouse_button_event);
-  glfwSetScrollCallback(_handle.get(), on_scroll_event);
+  glfwSetWindowPosCallback(p, on_position_event);
+  glfwSetWindowSizeCallback(p, on_size_event);
+  glfwSetWindowCloseCallback(p, on_close_event);
+  glfwSetWindowRefreshCallback(p, on_refresh_event);
+  glfwSetWindowFocusCallback(p, on_focus_event);
+  glfwSetWindowIconifyCallback(p, on_iconify_event);
+  glfwSetWindowMaximizeCallback(p, on_maximize_event);
+  glfwSetFramebufferSizeCallback(p, on_framebuffer_size_event);
+  glfwSetWindowContentScaleCallback(p, on_content_scale_event);
+
+  glfwSetKeyCallback(p, on_key_event);
+  glfwSetCharCallback(p, on_text_event);
+  glfwSetMouseButtonCallback(p, on_mouse_button_event);
+  glfwSetCursorPosCallback(p, on_cursor_move_event);
+  glfwSetCursorEnterCallback(p, on_cursor_enter_event);
+  glfwSetScrollCallback(p, on_scroll_event);
+  glfwSetDropCallback(p, on_drop_event);
 }
 
 void Window::make_context_current() {
@@ -111,8 +182,6 @@ bool Window::should_close() {
 void Window::set_should_close() {
   glfwSetWindowShouldClose(_handle.get(), true);
 }
-
-void Window::display() { glfwSwapBuffers(_handle.get()); }
 
 void Window::set_title(const std::string &title) {
   glfwSetWindowTitle(_handle.get(), title.c_str());
@@ -138,6 +207,18 @@ void Window::set_size(const Vec2i &size) {
   glfwSetWindowSize(_handle.get(), size.x, size.y);
 }
 
+Vec2i Window::framebuffer_size() const {
+  int w, h;
+  glfwGetFramebufferSize(_handle.get(), &w, &h);
+  return {w, h};
+}
+
+Vec2f Window::content_scale() const {
+  float xscale, yscale;
+  glfwGetWindowContentScale(_handle.get(), &xscale, &yscale);
+  return {xscale, yscale};
+}
+
 void Window::iconify() { glfwIconifyWindow(_handle.get()); }
 void Window::restore() { glfwRestoreWindow(_handle.get()); }
 void Window::maximize() { glfwMaximizeWindow(_handle.get()); }
@@ -145,6 +226,7 @@ void Window::maximize() { glfwMaximizeWindow(_handle.get()); }
 void Window::show() { glfwShowWindow(_handle.get()); }
 void Window::hide() { glfwHideWindow(_handle.get()); }
 void Window::focus() { glfwFocusWindow(_handle.get()); }
+void Window::request_attention() { glfwRequestWindowAttention(_handle.get()); }
 
 void Window::poll_events() {
   glfwPollEvents();
@@ -161,6 +243,18 @@ void Window::wait_events(double timeout) {
   _dispatcher->update();
 }
 
+void Window::display() {
+  glfwSwapBuffers(_handle.get());
+}
+
+std::string Window::get_clipboard_string() {
+  return glfwGetClipboardString(NULL);
+}
+
+void Window::set_clipboard_string(const std::string &text) {
+  glfwSetClipboardString(NULL, text.c_str());
+}
+
 bool Window::is_key_pressed(Key key) {
   return glfwGetKey(_handle.get(), static_cast<int>(key));
 }
@@ -169,12 +263,12 @@ bool Window::is_mouse_button_pressed(MouseButton button) {
   return glfwGetMouseButton(_handle.get(), static_cast<int>(button));
 }
 
-Vec2f Window::get_mouse_position() {
+Vec2f Window::get_cursor_position() {
   double xpos, ypos;
   glfwGetCursorPos(_handle.get(), &xpos, &ypos);
   return {xpos, ypos};
 }
 
-void Window::set_mouse_position(const Vec2f &position) {
+void Window::set_cursor_position(const Vec2f &position) {
   glfwSetCursorPos(_handle.get(), position.x, position.y);
 }

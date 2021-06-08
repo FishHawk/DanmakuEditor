@@ -2,7 +2,30 @@
 
 #include <functional>
 
+#include <fmt/core.h>
 #include <glm/glm.hpp>
+
+template <typename S, typename... Args>
+inline void print(const S &format_str, Args &&...args) {
+  fmt::print(format_str, args...);
+}
+
+template <typename Arg>
+inline void print(Arg &&arg) {
+  fmt::print("{}", arg);
+}
+
+template <typename S, typename... Args>
+inline void println(const S &format_str, Args &&...args) {
+  fmt::print(format_str, args...);
+  std::putc('\n', stdout);
+}
+
+template <typename Arg>
+inline void println(Arg &&arg) {
+  fmt::print("{}", arg);
+  std::putc('\n', stdout);
+}
 
 template <typename T>
 using Vec2 = glm::vec<2, T, glm::defaultp>;

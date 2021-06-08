@@ -13,7 +13,6 @@
 #include "systems/RenderSystem.hpp"
 #include "ui/Ui.hpp"
 #include "util/Timer.hpp"
-#include "util/debug.hpp"
 
 using namespace entt::literals;
 
@@ -22,7 +21,7 @@ Game::Game() {
   _renderer.load_resource("/home/wh/Projects/DanmakuEditor/assets/");
 
   _window.add_listener(new entt::listener{
-      [this](const ResizeEvent &e) {
+      [this](const WindowFramebufferSizeEvent &e) {
         auto &camera = _renderer.camera();
         camera.set_screen_size(e.width, e.height);
         camera.set_size(0.5f * e.width, 0.5f * e.height);

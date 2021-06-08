@@ -12,7 +12,6 @@
 #include "../components/Moveable.hpp"
 #include "../components/Renderable.hpp"
 #include "../util/Timer.hpp"
-#include "../util/debug.hpp"
 
 template <typename T>
 void append_number(std::deque<T> &queue, const T value) {
