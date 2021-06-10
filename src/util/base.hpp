@@ -5,8 +5,8 @@
 #include <fmt/core.h>
 #include <glm/glm.hpp>
 
-template <typename S, typename... Args>
-inline void print(const S &format_str, Args &&...args) {
+template <typename... Args>
+inline void print(const std::string &format_str, Args &&...args) {
   fmt::print(format_str, args...);
 }
 
@@ -15,8 +15,8 @@ inline void print(Arg &&arg) {
   fmt::print("{}", arg);
 }
 
-template <typename S, typename... Args>
-inline void println(const S &format_str, Args &&...args) {
+template <typename... Args>
+inline void println(const std::string &format_str, Args &&...args) {
   fmt::print(format_str, args...);
   std::putc('\n', stdout);
 }

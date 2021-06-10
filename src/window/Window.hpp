@@ -48,7 +48,7 @@ public:
 
   /* input */
   static std::string get_clipboard_string();
-  static void set_clipboard_string(const std::string& text);
+  static void set_clipboard_string(const std::string &text);
 
   bool is_key_pressed(Key key);
 

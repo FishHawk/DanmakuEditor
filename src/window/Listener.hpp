@@ -6,31 +6,25 @@ namespace entt {
 
 template <typename Event, typename Listener>
 concept Listenable = requires(Listener listener, const Event &event) {
-  listener.on_event(event);
-};
-
-template <typename Event, typename Listener>
-concept Callable = requires(Listener listener, const Event &event) {
-  listener.operator()(event);
+  listener(event);
 };
 
 template <typename... Ts>
-struct listener : Ts... {
-  template <typename T>
-  requires Callable<T, listener<Ts...>>
-  auto on_event(T &&args) {
-    return this->operator()(std::forward<T>(args));
-  }
+struct base_listener : Ts... { using Ts::operator()...; };
 
-private:
-  using Ts::operator()...;
+template <typename... Ts>
+struct listener : protected base_listener<Ts...> {
+  listener(Ts... args) : base_listener<Ts...>(args...) {}
+
+  template <typename T>
+  requires Listenable<T, base_listener<Ts...>>
+  void operator()(T v) { base_listener<Ts...>::operator()(v); }
 };
 
 template <typename Event, typename Listener>
-requires Listenable<Event, Listener>
 constexpr auto _get_ptr() {
   using Ptr = void (Listener::*)(const Event &);
-  return static_cast<Ptr>(&Listener::on_event);
+  return static_cast<Ptr>(&Listener::operator());
 }
 
 template <typename Event, typename Listener>
