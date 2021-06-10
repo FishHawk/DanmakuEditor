@@ -1,8 +1,9 @@
 #pragma once
 
 #include <functional>
+#include <sstream>
 
-#include <fmt/core.h>
+#include <fmt/ranges.h>
 #include <glm/glm.hpp>
 
 template <typename... Args>
@@ -10,20 +11,24 @@ inline void print(const std::string &format_str, Args &&...args) {
   fmt::print(format_str, args...);
 }
 
-template <typename Arg>
-inline void print(Arg &&arg) {
-  fmt::print("{}", arg);
+template <typename... Args>
+inline void print(Args &&...args) {
+  std::stringstream ss;
+  for (std::size_t i = 0; i < sizeof...(args); ++i) {
+    ss << "{} ";
+  }
+  fmt::print(ss.str(), args...);
 }
 
 template <typename... Args>
 inline void println(const std::string &format_str, Args &&...args) {
-  fmt::print(format_str, args...);
+  print(format_str, args...);
   std::putc('\n', stdout);
 }
 
-template <typename Arg>
-inline void println(Arg &&arg) {
-  fmt::print("{}", arg);
+template <typename... Args>
+inline void println(Args &&...args) {
+  print(args...);
   std::putc('\n', stdout);
 }
 
