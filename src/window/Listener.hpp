@@ -26,9 +26,6 @@ private:
   using Ts::operator()...;
 };
 
-template <class... Ts>
-listener(Ts...) -> listener<Ts...>;
-
 template <typename Event, typename Listener>
 requires Listenable<Event, Listener>
 constexpr auto _get_ptr() {
